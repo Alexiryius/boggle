@@ -15,46 +15,53 @@ import java.util.Random;
  *
  */
 public class De {
-	private char caractere;
-	FileInputStream fis = null;
+	private BufferedReader fichier_source;
+	private String[] retour;
 
 	public De() {
-
+		this.chercherLettre();
 	}
 
-	public String[] chercherLettre() {
-		String[] retour = new String[16];
+	public String[] getRetour() {
+		return retour;
+	}
+
+	public void setRetour(String[] retour) {
+		this.retour = retour;
+	}
+
+	public void chercherLettre() {
+		retour = new String[16];
 		String car;
 		Random rand = new Random();
 		int y = 0;
-		
+
 		try {
 			String chemin = "config/des-4x4.csv";
-			BufferedReader fichier_source = new BufferedReader(new FileReader(chemin));
+			fichier_source = new BufferedReader(new FileReader(chemin));
 
 			while ((car = fichier_source.readLine()) != null) {
 				int nombreAleatoire = rand.nextInt(6);
-				String[] array = car.split(";"); 
-				retour[y] = array[nombreAleatoire] ;
-				y ++;
+				String[] array = car.split(";");
+				retour[y] = array[nombreAleatoire];
+				y++;
 			}
-//			for(int o = 0; o<=15;o++){
-//				System.out.println(retour[o]);
-//			}
-
+			// for(int o = 0; o<=15;o++){
+			// System.out.println(retour[o]);
+			// }
+			fichier_source.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
 			try {
-				if (fis != null)
-					fis.close();
+				if (fichier_source != null)
+					fichier_source.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		return retour;
 
 	}
 
