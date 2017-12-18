@@ -45,32 +45,24 @@ public class Verifications<E> {
 	public boolean motEntier(String mot, int pointeur, int valeurX, int valeurY) {
 		affichageGrille();
 		if (pointeur >= mot.length()) {
-
-			System.out.println("return true pointeur");
 			return true;
 		}
 		String lettrePointe = mot.charAt(pointeur) + "";
-		System.out.println(lettrePointe +" pointeur --------------> "+ pointeur);
 		Queue<Integer> coord = estSurCaseAutour(lettrePointe, valeurX, valeurY);
 		while (!coord.isEmpty()) {
 			int x = coord.poll();
 			int y = coord.poll();
-			pointeur ++;
-			System.out.println("1------:-:-:-:-:------------pointeur : " +pointeur + " ----[" +x+"] ["+y+"]");
-			if(motEntier(mot, pointeur,x,y)) {
-				System.out.println(" return true ");
+			pointeur++;
+			if (motEntier(mot, pointeur, x, y)) {
 				return true;
 			}
-			System.out.println("2------:-:-:-:-:-----------pointeur : " +pointeur + " ----[" +x+"] ["+y+"]");
-			pointeur --;
+			pointeur--;
 		}
-		System.out.println(" return false " +  valeurX + "|"+ valeurY);
 		return false;
 
 	}
 
 	public Queue<Integer> estSurCaseAutour(String a, int valeurX, int valeurY) {
-		System.out.println(a + "valeur de x et y au début de sur case autour " +  valeurX + " : "+ valeurY);
 		Queue<Integer> coord = new LinkedList<Integer>();
 		for (int x = valeurX - 1; x <= valeurX + 1; x++) {
 			for (int y = valeurY - 1; y <= valeurY + 1; y++) {
@@ -89,7 +81,6 @@ public class Verifications<E> {
 				}
 
 				if (grille[x][y].equals(a + "")) {
-					System.out.println("grille[x][y] : " + grille[x][y] + "  -->["+x+"]["+y+"]");
 					coord.add(x);
 					coord.add(y);
 				}
@@ -106,7 +97,7 @@ public class Verifications<E> {
 				if (grille[x][y].equals("M") || grille[x][y].equals("W")) {
 					System.out.print("| " + grille[x][y] + " ");
 				} else {
-					System.out.print("| " + grille[x][y] + " \t");
+					System.out.print("| " + grille[x][y] + " ");
 				}
 			}
 			System.out.println("|\n");
