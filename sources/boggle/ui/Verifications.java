@@ -5,17 +5,17 @@ import java.util.Queue;
 
 import boggle.mots.*;
 
-public class Verifications<E> {
+public class Verifications {
 	GrilleLettres grilleLettres;
 	String[][] grille;
 	int tailleGrille;
 	int positionCurseur = 0;
 
-	public Verifications() {
-		grilleLettres = new GrilleLettres();
+	public Verifications(GrilleLettres maGrille) {
+		grilleLettres = maGrille;
 		tailleGrille = grilleLettres.getTailleGrille();
 		grille = grilleLettres.getTabGrille();
-		grilleLettres.remplirGrille();
+		//grilleLettres.remplirGrille();
 
 	}
 
@@ -43,7 +43,6 @@ public class Verifications<E> {
 	}
 
 	public boolean motEntier(String mot, int pointeur, int valeurX, int valeurY) {
-		affichageGrille();
 		if (pointeur >= mot.length()) {
 			return true;
 		}
@@ -90,18 +89,4 @@ public class Verifications<E> {
 		return coord;
 
 	}
-
-	public void affichageGrille() {
-		for (int x = 0; x < tailleGrille; x++) {
-			for (int y = 0; y < tailleGrille; y++) {
-				if (grille[x][y].equals("M") || grille[x][y].equals("W")) {
-					System.out.print("| " + grille[x][y] + " ");
-				} else {
-					System.out.print("| " + grille[x][y] + " ");
-				}
-			}
-			System.out.println("|\n");
-		}
-	}
-
 }

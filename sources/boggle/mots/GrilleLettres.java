@@ -16,6 +16,7 @@ public class GrilleLettres {
 	public GrilleLettres(int tailleGrille){
 		this.tailleGrille = tailleGrille;
 		tabGrille = new String[tailleGrille][tailleGrille];
+		this.remplirGrille();
 	}
 	
 	public int getTailleGrille() {
@@ -40,6 +41,16 @@ public class GrilleLettres {
 				compt ++;
 			}
 		}
+	}
+	public String toString() {
+		String affichage = "";
+		for (int x = 0; x < tailleGrille; x++) {
+			for (int y = 0; y < tailleGrille; y++) {
+				affichage += "| " + tabGrille[x][y] + " ";
+			}
+			affichage += "|\n";
+		}
+		return affichage;
 	}
 
 }

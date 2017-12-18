@@ -1,22 +1,22 @@
 package boggle.jeu;
 import clavier.Clavier;
-//import boggle.mot;
+import boggle.mots.*;
 
 public class Jeu {
 
 	private int tailleGrille;
 	private int nbJoueurs;
-	private int nbManches;
+	private int nbManchesMax;
 	private int scoreMax;
 
 	// tableau des joueurs
-	public Joueur[] joueurs;
+	private Joueur[] joueurs;
 
 	// constructeur
-	public Jeu(int tailleGrille, int nbJoueurs, int nbManches, int scoreMax) {
+	public Jeu(int tailleGrille, int nbJoueurs, int nbManchesMax, int scoreMax) {
 		this.tailleGrille = tailleGrille;
 		this.nbJoueurs = nbJoueurs;
-		this.nbManches = nbManches;
+		this.nbManchesMax = nbManchesMax;
 		this.scoreMax = scoreMax;
 		init();
 	}
@@ -32,18 +32,22 @@ public class Jeu {
 			joueurs[i-1] = new Joueur(nomJoueur);
 		}
 
-		// affichage des scores des joueurs
-		for(Joueur joueur : joueurs){
-           System.out.println(joueur); 
-        }
-
-
-		// GrilleLettres grille = new GrilleLettres(tailleGrille);
 	}
 
-	public int getNbManche() {
-		return nbManches;
+	public int getTailleGrille() {
+		return tailleGrille;
+	}
+	public int getNbJoueurs() {
+		return nbJoueurs;
+	}
+	public int getScoreMax() {
+		return scoreMax;
+	}
+	public int getNbMancheMax() {
+		return nbManchesMax;
 	}
 
-
+	public Joueur[] getJoueurs() {
+		return joueurs;
+	}
 }

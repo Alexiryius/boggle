@@ -1,6 +1,7 @@
+import boggle.ui.*;
 import boggle.jeu.*;
+import boggle.mots.*;
 import clavier.Clavier;
-// import boggle.mot;
 import java.lang.*;
 import java.util.*;
 
@@ -27,6 +28,9 @@ public class Run {
 		tailleGrille = Clavier.readInt();
 
 		// récap
-		Jeu jeu = new Jeu(tailleGrille, nbJoueurs, nbManches, scoreMax);
+		Jeu configJeu = new Jeu(tailleGrille, nbJoueurs, nbManches, scoreMax);
+		Tour jeu = new Tour(configJeu);
+
+
 	}
 }
