@@ -1,4 +1,3 @@
-import boggle.ui.*;
 import boggle.jeu.*;
 import boggle.mots.*;
 import clavier.Clavier;

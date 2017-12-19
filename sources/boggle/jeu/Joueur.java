@@ -32,6 +32,4 @@ public class Joueur {
 			return getName() + " : " + getScore() + " point.";
 		}
 	}
-
-
 }

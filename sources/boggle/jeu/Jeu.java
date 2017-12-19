@@ -1,13 +1,12 @@
-
 package boggle.jeu;
 
-import boggle.ui.*;
 import boggle.jeu.*;
 import boggle.mots.*;
 import clavier.Clavier;
 import java.lang.*;
 import java.util.*;
 import java.io.*;
+import java.text.Normalizer;
 
 public class Jeu {
 
@@ -32,45 +31,57 @@ public class Jeu {
 			// vidage de la console
 			cleanConsole();
 
+			// on affiche la manche
 			int manche = this.getTour()/config.getNbJoueurs() + 1;
 			System.out.println("Manche " + manche);
 
 			// affichage du score des joueurs
 			afficherScore(joueurs);
 
-
-		    // création et affichage de la grille
+			// création et affichage de la grille
 			grille = new GrilleLettres(config.getTailleGrille());
 			System.out.println(grille);
 
 			// message d'information qui précise a quel joueur c'est de jouer
 			System.out.println("A " + joueurs[tour%config.getNbJoueurs()].getName() + " de jouer (/ok pour terminer) :\n");
 
-			// on créé l'objet qui vérifie les mots
+
+			// on instancie l'arbre lexical et l'objet qui vérifie les mots
 			Verifications verif = new Verifications(grille);
+			//ArbreLexical arbre = new ArbreLexical();
 
 			// création de l'arraylist qui recense tous les mots entrés pour ne pas les compter en double
 			motsDejaDonnes = new ArrayList<String>();
 
 			// récupération de l'entrée standard
-			String mot = "";
+			String mot = " ";
 			while(!mot.equals("/OK")) {
-				mot = Clavier.readString().toUpperCase();
-				// vérification du mot dans la grille
-				if(verif.estDansGrille(mot)) {
-					// vérification du mot dans le dictionnaire
-					
-					// vérification dans les mots déjà dits
-					if(motsDejaDonnes.contains(mot)) {
-			      		System.out.println("Vous avez déjà donné ce mot."); 
+				// on vérifie la longueur
+				if(mot.length() > 2) {
+					// on supprime les accents et on met en majuscule
+					mot = enleverAccents(Clavier.readString()).toUpperCase();
+					// vérification du mot dans la grille
+					if(verif.estDansGrille(mot)) {
+						// vérification du mot dans le dictionnaire
+						// if(arbre.contient(mot)) {
+							// vérification dans les mots déjà dits
+							if(motsDejaDonnes.contains(mot)) {
+								System.out.println("Vous avez déjà donné ce mot."); 
+							} else {
+								joueurs[tour%config.getNbJoueurs()].setScore(5);
+								motsDejaDonnes.add(mot);
+								System.out.println(" + 5 points ! Total : " + joueurs[tour%config.getNbJoueurs()].getScore()); 
+							}
+						// } else {
+						// 	System.out.println("Ce mot n'existe pas dans le dictionnaire."); 
+						// }
+
+						// calcul des points et ajout au score
 					} else {
-						joueurs[tour%config.getNbJoueurs()].setScore(5);
-						motsDejaDonnes.add(mot);
-			      		System.out.println(" + 5 points ! Total : " + joueurs[tour%config.getNbJoueurs()].getScore()); 
+						System.out.println("Ce mot n'est pas dans la grille."); 
 					}
-					// calcul des points et ajout au score
 				} else {
-		      		System.out.println("Ce mot n'est pas dans la grille."); 
+					System.out.println("Les mots nécessitent au moins 3 caractères."); 
 				}
 			}
 
@@ -95,8 +106,8 @@ public class Jeu {
 
 	public static void afficherScore(Joueur[] joueur) {
 		for(Joueur joueurs : joueur){
-	       System.out.println(joueurs); 
-	    }
+			System.out.println(joueurs); 
+		}
 		System.out.println("\n");
 	}
 
@@ -107,13 +118,13 @@ public class Jeu {
 
 		// on récupère le score maximum
 		for(int i = 0; i < config.getNbJoueurs(); i++){
-			if(joueur[i].getScore() >= bestScore) {
+			if(joueur[i].getScore() > bestScore) {
 				bestScore = joueur[i].getScore();
 			}
-	    }
+		}
 
-	    // pour ce score maximum on récupère le nom de joueurs
-	    for(int i = 0; i < config.getNbJoueurs(); i++){
+		// pour ce score maximum on récupère le nom des joueurs correspondants
+		for(int i = 0; i < config.getNbJoueurs(); i++){
 			if(joueur[i].getScore() == bestScore) {
 				if(gagnant.equals("")) {
 					gagnant += joueur[i].getName();
@@ -123,14 +134,18 @@ public class Jeu {
 					gagnant += ", " + joueur[i].getName();
 				}
 			}
-	    }
-	    
-	    // on affiche le ou les gagnants
-	    if(unique) {
+		}
+
+		// on affiche le ou les gagnants
+		if(unique) {
 			System.out.println("Gagnant :\n" + gagnant + "\n");
-	    } else {
+		} else {
 			System.out.println("Gagnants ex-aequo :\n" + gagnant + "\n");
 		}
+	}
+
+	public static String enleverAccents(String mot) {
+		return Normalizer.normalize(mot, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
 	}
 
 	public int getTour() {
