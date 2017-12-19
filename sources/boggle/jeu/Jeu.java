@@ -83,6 +83,7 @@ public class Jeu {
 		// affichage final
 		System.out.println("Score final : \n"); 
 		afficherScore(joueurs);
+		this.declarerGagnant(joueurs);
 	}
 
 	public static void cleanConsole() {
@@ -97,6 +98,39 @@ public class Jeu {
 	       System.out.println(joueurs); 
 	    }
 		System.out.println("\n");
+	}
+
+	public void declarerGagnant(Joueur[] joueur) {
+		int bestScore = 0;
+		boolean unique = true;
+		String gagnant = "";
+
+		// on récupère le score maximum
+		for(int i = 0; i < config.getNbJoueurs(); i++){
+			if(joueur[i].getScore() >= bestScore) {
+				bestScore = joueur[i].getScore();
+			}
+	    }
+
+	    // pour ce score maximum on récupère le nom de joueurs
+	    for(int i = 0; i < config.getNbJoueurs(); i++){
+			if(joueur[i].getScore() == bestScore) {
+				if(gagnant.equals("")) {
+					gagnant += joueur[i].getName();
+				} else {
+					// s'il y a plusieurs joueurs avec le même score on passe la variable unique a false
+					unique = false;
+					gagnant += ", " + joueur[i].getName();
+				}
+			}
+	    }
+	    
+	    // on affiche le ou les gagnants
+	    if(unique) {
+			System.out.println("Gagnant :\n" + gagnant + "\n");
+	    } else {
+			System.out.println("Gagnants ex-aequo :\n" + gagnant + "\n");
+		}
 	}
 
 	public int getTour() {

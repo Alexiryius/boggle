@@ -32,9 +32,9 @@ public class Verifications {
 				if (grille[x][y]==mot.charAt(0)) {
 					dansGrille = motEntier(mot, 1, x, y);
 				}
-			}
-			if (dansGrille) {
-				break;
+				if (dansGrille) {
+					return dansGrille;
+				}
 			}
 		}
 		return dansGrille;
