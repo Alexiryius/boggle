@@ -28,8 +28,8 @@ public class Run {
 		tailleGrille = Clavier.readInt();
 
 		// récap
-		Jeu configJeu = new Jeu(tailleGrille, nbJoueurs, nbManches, scoreMax);
-		Tour jeu = new Tour(configJeu);
+		Config config = new Config(tailleGrille, nbJoueurs, nbManches, scoreMax);
+		Jeu jeu = new Jeu(config);
 
 
 	}
