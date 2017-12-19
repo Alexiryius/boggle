@@ -6,7 +6,7 @@ package boggle.mots;
 public class GrilleLettres {
 	
 	private int tailleGrille ;
-	private String [][] tabGrille ;
+	private char [][] tabCharGrille;
 	private De de;
 	
 	public GrilleLettres(){
@@ -15,7 +15,7 @@ public class GrilleLettres {
 	
 	public GrilleLettres(int tailleGrille){
 		this.tailleGrille = tailleGrille;
-		tabGrille = new String[tailleGrille][tailleGrille];
+		tabCharGrille = new char[tailleGrille][tailleGrille];
 		this.remplirGrille();
 	}
 	
@@ -23,21 +23,22 @@ public class GrilleLettres {
 		return tailleGrille;
 	}
 	
-	public String[][] getTabGrille() {
-		return tabGrille;
+
+	public char[][] getTabCharGrille() {
+		return tabCharGrille;
 	}
 	
-	public void setTabGrille(String[][] tabGrille) {
-		this.tabGrille = tabGrille;
+	public void setTabCharGrille(char[][] tabCharGrille) {
+		this.tabCharGrille = tabCharGrille;
 	}
 	
 	public void remplirGrille() {
 		de = new De();
-		String[] lettres = de.getRetour();
+		char[] lettres = de.getRetour();
 		int compt =0;
 		for(int x = 0; x < tailleGrille;x++ ) {
 			for(int y = 0; y < tailleGrille;y++ ) {
-				tabGrille[x][y]= lettres[compt];
+				tabCharGrille[x][y]= lettres[compt];
 				compt ++;
 			}
 		}
@@ -46,7 +47,7 @@ public class GrilleLettres {
 		String affichage = "";
 		for (int x = 0; x < tailleGrille; x++) {
 			for (int y = 0; y < tailleGrille; y++) {
-				affichage += "| " + tabGrille[x][y] + " ";
+				affichage += "|" + tabCharGrille[x][y] + "";
 			}
 			affichage += "|\n";
 		}

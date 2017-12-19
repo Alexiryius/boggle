@@ -1,4 +1,4 @@
-package boggle.ui;
+package boggle.mots;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -7,16 +7,14 @@ import boggle.mots.*;
 
 public class Verifications {
 	GrilleLettres grilleLettres;
-	String[][] grille;
+	char[][] grille;
 	int tailleGrille;
 	int positionCurseur = 0;
 
 	public Verifications(GrilleLettres maGrille) {
 		grilleLettres = maGrille;
 		tailleGrille = grilleLettres.getTailleGrille();
-		grille = grilleLettres.getTabGrille();
-		//grilleLettres.remplirGrille();
-
+		grille = grilleLettres.getTabCharGrille();
 	}
 
 	public int getPositionCurseur() {
@@ -31,7 +29,7 @@ public class Verifications {
 		boolean dansGrille = false;
 		for (int x = 0; x < tailleGrille; x++) {
 			for (int y = 0; y < tailleGrille; y++) {
-				if (grille[x][y].equals(mot.charAt(0) + "")) {
+				if (grille[x][y]==mot.charAt(0)) {
 					dansGrille = motEntier(mot, 1, x, y);
 				}
 			}
@@ -46,7 +44,7 @@ public class Verifications {
 		if (pointeur >= mot.length()) {
 			return true;
 		}
-		String lettrePointe = mot.charAt(pointeur) + "";
+		char lettrePointe = mot.charAt(pointeur);
 		Queue<Integer> coord = estSurCaseAutour(lettrePointe, valeurX, valeurY);
 		while (!coord.isEmpty()) {
 			int x = coord.poll();
@@ -61,7 +59,7 @@ public class Verifications {
 
 	}
 
-	public Queue<Integer> estSurCaseAutour(String a, int valeurX, int valeurY) {
+	public Queue<Integer> estSurCaseAutour(char a, int valeurX, int valeurY) {
 		Queue<Integer> coord = new LinkedList<Integer>();
 		for (int x = valeurX - 1; x <= valeurX + 1; x++) {
 			for (int y = valeurY - 1; y <= valeurY + 1; y++) {
@@ -79,7 +77,7 @@ public class Verifications {
 					return coord;
 				}
 
-				if (grille[x][y].equals(a + "")) {
+				if (grille[x][y]==a ) {
 					coord.add(x);
 					coord.add(y);
 				}

@@ -1,5 +1,7 @@
 package boggle.mots;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import boggle.ui.*;
@@ -20,7 +22,18 @@ public class Test {
 		
 		
 		ArbreLexical a = new ArbreLexical();
-		a.ajouter("bonjour");
+//
+//		System.out.println(a.contient("bonjour"));
+		a.ajouter("bonjour");a.ajouter("bonjui");a.ajouter("rfedf");
+//		System.out.println(a.contient("bonjour"));
+//		System.out.println(a.contient("rfedf"));
+		List<String> liste = new ArrayList<String>();
+//		boolean tyt = a.motsCPar("",liste);
+		for(String ab : liste){
+			System.out.println("aha");
+			System.out.println(ab);
+		}
+		
 		System.out.println("ok");
 		// while(true) {
 		// System.out.println("déplacer le curseur avec les flèches directionnelles");

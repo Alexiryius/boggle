@@ -1,5 +1,6 @@
 package boggle.mots;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -66,8 +67,23 @@ public class ArbreLexical {
 	 *         instance de String ou si le mot n'est pas dans l'arbre lexical.
 	 */
 	public boolean contient(String word) {
-		// à compléter
-		return false;
+		String nWord = "";
+		
+		for (int i = 1; i < word.length(); i++) {
+			nWord += word.charAt(i) + "";
+		}
+		char maj = Character.toUpperCase(word.charAt(0));
+		int valueInt = maj - 65;
+		if(nWord.equals("")){
+			return true;
+		}
+		
+		if( this.fils[valueInt]!= null  && this.fils[valueInt].contient(nWord)){
+			return true;		
+		}
+		else{
+			return false;
+		}
 	}
 
 	/**
@@ -77,9 +93,38 @@ public class ArbreLexical {
 	 *         <code>false</code> sinon.
 	 */
 	public boolean motsCommencantPar(String prefixe, List<String> resultat) {
-		// à compléter
+
+		
 		return false;
 	}
+
+
+
+//	public boolean motsCPar(String motAj, List<String> listMots){
+//		motAj += this.lettre;
+//		System.out.println(this.estMot() +" "+ motAj);
+//		if(this.estMot()){
+//			listMots.add(motAj);
+//			return true;
+//		}
+//		
+//		for(int i = 0 ; i<TAILLE_ALPHABET ; i++){
+//			if(this.fils!= null && this.fils[i]!= null){
+//
+//				System.out.println("entre la ");
+//				if(this.fils[i].motsCPar(motAj, listMots)){
+//					return true;
+//				}
+//			}
+//			else{
+//				return false;
+//			}
+//			motAj="";
+//		}
+//		return true;
+//		
+//		
+//	}
 
 	/**
 	 * Crée un arbre lexical qui contient tous les mots du fichier spécifié.
@@ -88,4 +133,7 @@ public class ArbreLexical {
 		// à compléter
 		return null;
 	}
+
+
+
 }

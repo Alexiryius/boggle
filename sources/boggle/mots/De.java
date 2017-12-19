@@ -16,23 +16,23 @@ import java.util.Random;
  */
 public class De {
 	private BufferedReader fichier_source;
-	private String[] retour;
+	private char[] retour;
 
 	public De() {
 		this.chercherLettre();
 	}
 
-	public String[] getRetour() {
+	public char[] getRetour() {
 		return retour;
 	}
 
-	public void setRetour(String[] retour) {
+	public void setRetour(char[] retour) {
 		this.retour = retour;
 	}
 
 	public void chercherLettre() {
-		retour = new String[16];
-		String car;
+		retour = new char[16];
+		String str;
 		Random rand = new Random();
 		int y = 0;
 
@@ -40,10 +40,10 @@ public class De {
 			String chemin = "config/des-4x4.csv";
 			fichier_source = new BufferedReader(new FileReader(chemin));
 
-			while ((car = fichier_source.readLine()) != null) {
+			while ((str = fichier_source.readLine()) != null) {
 				int nombreAleatoire = rand.nextInt(6);
-				String[] array = car.split(";");
-				retour[y] = array[nombreAleatoire];
+				String[] array = str.split(";");
+				retour[y] = array[nombreAleatoire].charAt(0);
 				y++;
 			}
 			// for(int o = 0; o<=15;o++){
