@@ -1,6 +1,10 @@
 package boggle.mots;
 
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.text.Normalizer;
 import java.util.List;
 
 /**
@@ -12,8 +16,8 @@ public class ArbreLexical {
 	public String lettre;
 	private boolean estMot; // vrai si le noeud courant est la fin d'un mot
 							// valide
-	private ArbreLexical[] fils = new ArbreLexical[TAILLE_ALPHABET]; // les
-																		// sous-arbres
+	private static ArbreLexical[] fils = new ArbreLexical[TAILLE_ALPHABET]; // les
+	// sous-arbres
 
 	/** Crée un arbre vide (sans aucun mot) */
 	public ArbreLexical() {
@@ -28,6 +32,13 @@ public class ArbreLexical {
 		return estMot;
 	}
 
+	public boolean ajouterNormalize(String s) {
+		String temp = Normalizer.normalize(s, Normalizer.Form.NFD);
+		temp.replaceAll("[^\\p{ASCII}]", "").toUpperCase();
+		return this.ajouter(temp);
+
+	}
+
 	/**
 	 * Place le mot spécifié dans l'arbre
 	 * 
@@ -38,25 +49,39 @@ public class ArbreLexical {
 		String nWord = "";
 		ArbreLexical Nfils = new ArbreLexical();
 		int valueInt = 0;
+		
+		if (word.length() >= 1) {
+			valueInt = word.charAt(0) - 65;
+			Nfils.lettre = word.charAt(0) + "";
+			for (int i = 1; i < word.length(); i++) {
+				nWord += word.charAt(i) + "";
+			}
+			if (word.length() == 1) {
+				Nfils.estMot = true;
+			} else {
+				Nfils.estMot = false;
+			}
+			if (!nWord.equals("")) {
+				Nfils.ajouter(nWord);
+			} else {
+				this.fils = null;
+			}
+			System.out.println(word+"___________" + nWord);
+			this.fils[valueInt] = Nfils;
+			
 
-		char maj = Character.toUpperCase(word.charAt(0));
-		valueInt = maj - 65;
-		
-		Nfils.lettre = word.charAt(0) + "";
-		
-		for (int i = 1; i < word.length(); i++) {
-			nWord += word.charAt(i) + "";
+			return true;
+		} else {
+			return false;
 		}
-		
-		if (word.length() == 1) { Nfils.estMot = true; } 
-		else { Nfils.estMot = false; }
 
-		if (!nWord.equals("")) { Nfils.ajouter(nWord); } 
-		else { Nfils.fils = null; }
-		
-		this.fils[valueInt] = Nfils;
-		// à compléter
-		return true;
+	}
+
+	public boolean contientNormalize(String s) {
+		String temp = Normalizer.normalize(s, Normalizer.Form.NFD);
+		temp.replaceAll("[^\\p{ASCII}]", "").toUpperCase();
+		return this.contient(temp);
+
 	}
 
 	/**
@@ -68,22 +93,22 @@ public class ArbreLexical {
 	 */
 	public boolean contient(String word) {
 		String nWord = "";
-		
-		for (int i = 1; i < word.length(); i++) {
-			nWord += word.charAt(i) + "";
-		}
-		char maj = Character.toUpperCase(word.charAt(0));
-		int valueInt = maj - 65;
-		if(nWord.equals("")){
-			return true;
-		}
-		
-		if( this.fils[valueInt]!= null  && this.fils[valueInt].contient(nWord)){
-			return true;		
-		}
-		else{
+		if (word.length() >= 1) {
+			for (int i = 1; i < word.length(); i++) {
+				nWord += word.charAt(i) + "";
+			}
+
+			int valueInt = word.charAt(0) - 65;
+
+			if (ArbreLexical.fils[valueInt] != null && ArbreLexical.fils[valueInt].contient(nWord)) {
+				if (nWord.equals("") && this.estMot()) {
+					return true;
+				} else
+					return false;
+			} else
+				return false;
+		} else
 			return false;
-		}
 	}
 
 	/**
@@ -94,46 +119,68 @@ public class ArbreLexical {
 	 */
 	public boolean motsCommencantPar(String prefixe, List<String> resultat) {
 
-		
 		return false;
 	}
 
-
-
-//	public boolean motsCPar(String motAj, List<String> listMots){
-//		motAj += this.lettre;
-//		System.out.println(this.estMot() +" "+ motAj);
-//		if(this.estMot()){
-//			listMots.add(motAj);
-//			return true;
-//		}
-//		
-//		for(int i = 0 ; i<TAILLE_ALPHABET ; i++){
-//			if(this.fils!= null && this.fils[i]!= null){
-//
-//				System.out.println("entre la ");
-//				if(this.fils[i].motsCPar(motAj, listMots)){
-//					return true;
-//				}
-//			}
-//			else{
-//				return false;
-//			}
-//			motAj="";
-//		}
-//		return true;
-//		
-//		
-//	}
+	// public boolean motsCPar(String motAj, List<String> listMots){
+	// motAj += this.lettre;
+	// System.out.println(this.estMot() +" "+ motAj);
+	// if(this.estMot()){
+	// listMots.add(motAj);
+	// return true;
+	// }
+	//
+	// for(int i = 0 ; i<TAILLE_ALPHABET ; i++){
+	// if(this.fils!= null && this.fils[i]!= null){
+	//
+	// System.out.println("entre la ");
+	// if(this.fils[i].motsCPar(motAj, listMots)){
+	// return true;
+	// }
+	// }
+	// else{
+	// return false;
+	// }
+	// motAj="";
+	// }
+	// return true;
+	//
+	//
+	// }
 
 	/**
 	 * Crée un arbre lexical qui contient tous les mots du fichier spécifié.
 	 */
-	public static ArbreLexical lireMots(String fichier) {
-		// à compléter
-		return null;
+	public void lireMots(String fichier) {
+
+		BufferedReader fichier_dico = null;
+		String line = "";
+		int i = 0;
+		try {
+			fichier_dico = new BufferedReader(new FileReader(fichier));
+
+			while ((line = fichier_dico.readLine()) != null && !line.equals("")) {
+				System.out.println(i + "-------------" + line);
+				this.ajouter(line);
+				i++;
+			}
+
+			fichier_dico.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (fichier_dico != null) {
+					fichier_dico.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+
+			}
+		}
+
 	}
-
-
 
 }

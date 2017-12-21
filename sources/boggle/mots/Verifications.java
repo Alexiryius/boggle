@@ -3,8 +3,6 @@ package boggle.mots;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import boggle.mots.*;
-
 public class Verifications {
 	GrilleLettres grilleLettres;
 	char[][] grille;

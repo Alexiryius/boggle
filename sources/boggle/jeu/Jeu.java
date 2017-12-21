@@ -38,9 +38,10 @@ public class Jeu {
 			// affichage du score des joueurs
 			afficherScore(joueurs);
 
-			// création et affichage de la grille
 			grille = new GrilleLettres(config.getTailleGrille());
+			
 			System.out.println(grille);
+
 
 			// message d'information qui précise a quel joueur c'est de jouer
 			System.out.println("A " + joueurs[tour%config.getNbJoueurs()].getName() + " de jouer (/ok pour terminer) :\n");
@@ -52,10 +53,17 @@ public class Jeu {
 
 			// création de l'arraylist qui recense tous les mots entrés pour ne pas les compter en double
 			motsDejaDonnes = new ArrayList<String>();
-
+			
 			// récupération de l'entrée standard
-			String mot = " ";
+			String mot = Clavier.readString();
 			while(!mot.equals("/OK")) {
+				
+				cleanConsole();
+				afficherScore(joueurs);
+				System.out.println(grille);
+				// message d'information qui précise a quel joueur c'est de jouer
+				System.out.println("A " + joueurs[tour%config.getNbJoueurs()].getName() + " de jouer (/ok pour terminer) :\n");
+
 				// on vérifie la longueur
 				if(mot.length() > 2) {
 					// on supprime les accents et on met en majuscule
@@ -82,6 +90,12 @@ public class Jeu {
 					}
 				} else {
 					System.out.println("Les mots nécessitent au moins 3 caractères."); 
+				}
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 
@@ -154,4 +168,6 @@ public class Jeu {
 	public void setTour() {
 		tour++;
 	}
+
+	
 }
