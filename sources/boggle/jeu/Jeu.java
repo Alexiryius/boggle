@@ -63,7 +63,10 @@ public class Jeu {
 				System.out.println(grille);
 				// message d'information qui précise a quel joueur c'est de jouer
 				System.out.println("A " + joueurs[tour%config.getNbJoueurs()].getName() + " de jouer (/ok pour terminer) :\n");
-
+				System.out.println("Mots déjà donnés : ");
+				for(String motDonne: motsDejaDonnes){
+					System.out.print(motDonne+" ; ");
+				}
 				// on vérifie la longueur
 				if(mot.length() > 2) {
 					// on supprime les accents et on met en majuscule
