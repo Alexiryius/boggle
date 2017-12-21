@@ -16,7 +16,7 @@ public class ArbreLexical {
 	public String lettre;
 	private boolean estMot; // vrai si le noeud courant est la fin d'un mot
 							// valide
-	private static ArbreLexical[] fils = new ArbreLexical[TAILLE_ALPHABET]; // les
+	private  ArbreLexical[] fils = new ArbreLexical[TAILLE_ALPHABET]; // les
 	// sous-arbres
 
 	/** Crée un arbre vide (sans aucun mot) */
@@ -33,8 +33,8 @@ public class ArbreLexical {
 	}
 
 	public boolean ajouterNormalize(String s) {
-		String temp = Normalizer.normalize(s, Normalizer.Form.NFD);
-		temp.replaceAll("[^\\p{ASCII}]", "").toUpperCase();
+		String temp = Normalizer.normalize(s, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+		temp = Normalizer.normalize(temp.toUpperCase(), Normalizer.Form.NFD);
 		return this.ajouter(temp);
 
 	}
@@ -42,34 +42,29 @@ public class ArbreLexical {
 	/**
 	 * Place le mot spécifié dans l'arbre
 	 * 
-	 * @return <code>true</code> si le mot a été ajouté, <code>false</code>
-	 *         sinon
+	 * @return <code>true</code> si le mot a été ajouté, <code>false</code> sinon
 	 */
 	public boolean ajouter(String word) {
 		String nWord = "";
 		ArbreLexical Nfils = new ArbreLexical();
 		int valueInt = 0;
-		
+
 		if (word.length() >= 1) {
 			valueInt = word.charAt(0) - 65;
+			//System.out.println(valueInt);
 			Nfils.lettre = word.charAt(0) + "";
 			for (int i = 1; i < word.length(); i++) {
 				nWord += word.charAt(i) + "";
 			}
 			if (word.length() == 1) {
 				Nfils.estMot = true;
+				Nfils.fils = null;
 			} else {
-				Nfils.estMot = false;
-			}
-			if (!nWord.equals("")) {
 				Nfils.ajouter(nWord);
-			} else {
-				this.fils = null;
+				Nfils.estMot = false;
+				this.fils[valueInt] = Nfils;
 			}
-			System.out.println(word+"___________" + nWord);
-			this.fils[valueInt] = Nfils;
-			
-
+			//System.out.println(word + "___________" + nWord + "___________"+this.lettre+"____________"+Nfils.lettre);
 			return true;
 		} else {
 			return false;
@@ -77,39 +72,39 @@ public class ArbreLexical {
 
 	}
 
-	public boolean contientNormalize(String s) {
-		String temp = Normalizer.normalize(s, Normalizer.Form.NFD);
-		temp.replaceAll("[^\\p{ASCII}]", "").toUpperCase();
-		return this.contient(temp);
-
-	}
-
-	/**
-	 * Teste si l'arbre lexical contient le mot spécifié.
-	 * 
-	 * @return <code>true</code> si <code>o</code> est un mot (String) contenu
-	 *         dans l'arbre, <code>false</code> si <code>o</code> n'est pas une
-	 *         instance de String ou si le mot n'est pas dans l'arbre lexical.
-	 */
-	public boolean contient(String word) {
-		String nWord = "";
-		if (word.length() >= 1) {
-			for (int i = 1; i < word.length(); i++) {
-				nWord += word.charAt(i) + "";
-			}
-
-			int valueInt = word.charAt(0) - 65;
-
-			if (ArbreLexical.fils[valueInt] != null && ArbreLexical.fils[valueInt].contient(nWord)) {
-				if (nWord.equals("") && this.estMot()) {
-					return true;
-				} else
-					return false;
-			} else
-				return false;
-		} else
-			return false;
-	}
+//	public boolean contientNormalize(String s) {
+//		String temp = Normalizer.normalize(s, Normalizer.Form.NFD);
+//		temp.replaceAll("[^\\p{ASCII}]", "").toUpperCase();
+//		return this.contient(temp);
+//
+//	}
+//
+//	/**
+//	 * Teste si l'arbre lexical contient le mot spécifié.
+//	 * 
+//	 * @return <code>true</code> si <code>o</code> est un mot (String) contenu dans
+//	 *         l'arbre, <code>false</code> si <code>o</code> n'est pas une instance
+//	 *         de String ou si le mot n'est pas dans l'arbre lexical.
+//	 */
+//	public boolean contient(String word) {
+//		String nWord = "";
+//		if (word.length() >= 1) {
+//			for (int i = 1; i < word.length(); i++) {
+//				nWord += word.charAt(i) + "";
+//			}
+//
+//			int valueInt = word.charAt(0) - 65;
+//
+//			if (ArbreLexical.fils[valueInt] != null && ArbreLexical.fils[valueInt].contient(nWord)) {
+//				if (nWord.equals("") && this.estMot()) {
+//					return true;
+//				} else
+//					return false;
+//			} else
+//				return false;
+//		} else
+//			return false;
+//	}
 
 	/**
 	 * Ajoute à la liste <code>resultat<code> tous les mots de
@@ -158,10 +153,9 @@ public class ArbreLexical {
 		int i = 0;
 		try {
 			fichier_dico = new BufferedReader(new FileReader(fichier));
-
-			while ((line = fichier_dico.readLine()) != null && !line.equals("")) {
+			for ( line = fichier_dico.readLine(); line != null; line = fichier_dico.readLine()) {
 				System.out.println(i + "-------------" + line);
-				this.ajouter(line);
+				this.ajouterNormalize(line);
 				i++;
 			}
 
