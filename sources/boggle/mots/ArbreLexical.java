@@ -13,18 +13,21 @@ import java.util.regex.Pattern;
  * La classe ArbreLexical permet de stocker de façon compacte et d'accéder
  * rapidement à un ensemble de mots.
  */
-public class ArbreLexical {
+class ArbreLexical {
 	public static final int TAILLE_ALPHABET = 26;
 	public String lettre;
 	private boolean estMot; // vrai si le noeud courant est la fin d'un mot
 							// valide
-	private ArbreLexical[] fils = new ArbreLexical[TAILLE_ALPHABET]; // les
+	ArbreLexical[] fils = new ArbreLexical[TAILLE_ALPHABET]; // les
 	// sous-arbres
 
 	/** Crée un arbre vide (sans aucun mot) */
-	public ArbreLexical() {
-		lettre = null;
-		estMot = false;
+	protected ArbreLexical() {
+		this.lettre = null;
+		this.estMot = false;
+		for (int i = 0; i < TAILLE_ALPHABET; i++) {
+			this.fils[i] = null;
+		}
 	}
 
 	/**
@@ -34,11 +37,13 @@ public class ArbreLexical {
 		return estMot;
 	}
 
-	public boolean ajouterNormalize(String s) {
+	/**
+	 * Transforme un mot en minuscule et accent en mot en majuscule sans accent
+	 */
+	public static String aNormalise(String s) {
 		String temp = Normalizer.normalize(s, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
 		temp = Normalizer.normalize(temp.toUpperCase(), Normalizer.Form.NFD);
-		return this.ajouter(temp);
-
+		return temp;
 	}
 
 	/**
@@ -46,28 +51,42 @@ public class ArbreLexical {
 	 * 
 	 * @return <code>true</code> si le mot a été ajouté, <code>false</code> sinon
 	 */
+	int atat = 0;
 	public boolean ajouter(String word) {
+	System.out.println(word);
+		if (this.contient(word)) {
+			return true;
+		} else {
+
+			return ajouterNouveau(word);
+		}
+	}
+
+	public boolean ajouterNouveau(String word) {
+
 		String nWord = "";
-		ArbreLexical Nfils = new ArbreLexical();
+
 		int valueInt = 0;
 
-		if (word.length() >= 1) {
-			valueInt = word.charAt(0) - 65;
-			// System.out.println(valueInt);
-			Nfils.lettre = word.charAt(0) + "";
-			for (int i = 1; i < word.length(); i++) {
-				nWord += word.charAt(i) + "";
+		valueInt = word.charAt(0) - 65;
+		for (int i = 1; i < word.length(); i++) {
+			nWord += word.charAt(i) + "";
+		}
+		if (word.length() == 1) {
+			if (this.fils[valueInt] == null) {
+				this.fils[valueInt] = new ArbreLexical();
 			}
-			if (word.length() == 1) {
-				Nfils.estMot = true;
-				Nfils.fils = null;
-			} else {
-				Nfils.ajouter(nWord);
-				Nfils.estMot = false;
-				this.fils[valueInt] = Nfils;
+			this.fils[valueInt].estMot = true;
+			this.fils[valueInt].lettre = word;
+			return true;
+		} else if (nWord.length() >= 1) {
+
+			if (this.fils[valueInt] == null) {
+				this.fils[valueInt] = new ArbreLexical();
 			}
-			// System.out.println(word + "___________" + nWord +
-			// "___________"+this.lettre+"____________"+Nfils.lettre);
+			String lettre = word.charAt(0) + "";
+			this.fils[valueInt].lettre = lettre;
+			this.fils[valueInt].ajouterNouveau(nWord);
 			return true;
 		} else {
 			return false;
@@ -75,47 +94,80 @@ public class ArbreLexical {
 
 	}
 
-	// public boolean contientNormalize(String s) {
-	// String temp = Normalizer.normalize(s, Normalizer.Form.NFD);
-	// temp.replaceAll("[^\\p{ASCII}]", "").toUpperCase();
-	// return this.contient(temp);
-	//
-	// }
-	//
-	// /**
-	// * Teste si l'arbre lexical contient le mot spécifié.
-	// *
-	// * @return <code>true</code> si <code>o</code> est un mot (String) contenu
-	// dans
-	// * l'arbre, <code>false</code> si <code>o</code> n'est pas une instance
-	// * de String ou si le mot n'est pas dans l'arbre lexical.
-	// */
-	// public boolean contient(String word) {
-	// String nWord = "";
-	// if (word.length() >= 1) {
-	// for (int i = 1; i < word.length(); i++) {
-	// nWord += word.charAt(i) + "";
-	// }
-	//
-	// int valueInt = word.charAt(0) - 65;
-	//
-	// if (ArbreLexical.fils[valueInt] != null &&
-	// ArbreLexical.fils[valueInt].contient(nWord)) {
-	// if (nWord.equals("") && this.estMot()) {
-	// return true;
-	// } else
-	// return false;
-	// } else
-	// return false;
-	// } else
-	// return false;
-	// }
+//	public void toStrong() {
+//		System.out.println("");
+//		for (int i = 0; i < TAILLE_ALPHABET; i++) {
+//			try {
+//				if (this.fils[i] != null) {
+//					this.fils[i].toStrong();
+//					System.out.print((this.fils[i].lettre));
+//				}
+//			} catch (NullPointerException e) {
+//				System.out.println("exeption");
+//			}
+//		}
+//
+//	}
 
 	/**
-	 * Ajoute à la liste <code>resultat<code> tous les mots de
-	  * l'arbre commençant par le préfixe spécifié. 
-	  * @return <code>true</code> si <code>resultat</code> a été modifié,
-	 *         <code>false</code> sinon.
+	 * Teste si l'arbre lexical contient le mot spécifié.
+	 *
+	 * @return true si word est un mot (String) contenu dans l'arbre, false si word
+	 *         n'est pas une instance de String ou si le mot n'est pas dans l'arbre
+	 *         lexical.
+	 */
+	public boolean contient(String word) {
+		if (word instanceof String == false && word.length() <= 0) {
+			return false;
+		} else {
+			word = aNormalise(word);
+			return this.contientNormalise(word);
+		}
+	}
+
+	/**
+	 * 
+	 * @param word
+	 * @return
+	 */
+	public boolean contientNormalise(String word) {
+		// System.out.println("est-ce que " + word + " est dans l'arbre");
+		String nWord = "";
+
+		for (int i = 1; i < word.length(); i++) {
+			nWord += word.charAt(i) + "";
+		}
+
+		// pour mettre à zero l'indice du caractère ascii 'A'
+
+		// si l'indice de la première lettre est stockée dans le fils de this et si le
+		// fils contient la suite du mot
+
+		if (word.equals(""))
+			return false;
+		int valueInt = word.charAt(0) - 65;
+		// System.out.println(valueInt);
+		try {
+			if (this.fils[valueInt] != null) {
+				// System.out.println((char) (valueInt + 65) + " existe dans l'arbre");
+				if (this.fils[valueInt].estMot && nWord.equals("")) {
+					return true;
+				} else {
+					return this.fils[valueInt].contientNormalise(nWord);
+				}
+			}
+		} catch (NullPointerException e) {
+			return false;
+		}
+		return false;
+
+	}
+
+	/**
+	 * Ajoute à la liste resultat tous les mots de l'arbre commençant par le préfixe
+	 * spécifié.
+	 * 
+	 * @return true si resultat a été modifié, false sinon.
 	 */
 	public boolean motsCommencantPar(String prefixe, List<String> resultat) {
 
@@ -147,8 +199,6 @@ public class ArbreLexical {
 	//
 	//
 	// }
-	
-
 
 	/**
 	 * Crée un arbre lexical qui contient tous les mots du fichier spécifié.
@@ -160,14 +210,12 @@ public class ArbreLexical {
 		int i = 0;
 		try {
 			fichier_dico = new BufferedReader(new FileReader(fichier));
-			for (line = fichier_dico.readLine(); line!=null; line = fichier_dico.readLine()) {
+			for (line = fichier_dico.readLine(); line != null; line = fichier_dico.readLine()) {
 
 				if (verifierMot(line)) {
-					System.out.println(i + "-------------" + line);
-					this.ajouterNormalize(line);
+					this.ajouter(aNormalise(line));
 				} else
-					System.out.println(i + "---PAS AJOUTE-------------" + line);
-				i++;
+					i++;
 			}
 
 			fichier_dico.close();
@@ -188,7 +236,11 @@ public class ArbreLexical {
 
 	}
 
-	// savoir si le mot est composé de lettre de l'alphabet accent compris
+	/**
+	 * Fonction qui sert à savoir si un mot contient un chiffre, une lettre de
+	 * l'alphabet grec, un signe de ponctuation, des caractère spéciaux comme les
+	 * exposant ou le caractère lambda.
+	 */
 	public boolean verifierMot(String mot) {
 
 		String regex1 = "\\d+";
@@ -196,52 +248,24 @@ public class ArbreLexical {
 		String regex3 = "\\p{Punct}+";
 		String regex4 = "[\\u02B0-\\u1D49]+";
 		String regex5 = "[\\u00B5]+";
-		Pattern p1 = Pattern.compile(regex1);
-		Matcher m1 = p1.matcher(mot);
+		String regex6 = "[\\u2082]+";
 
-		Pattern p2 = Pattern.compile(regex2);
-		Matcher m2 = p2.matcher(mot);
+		Pattern p = Pattern.compile(regex1);
+		Matcher m1 = p.matcher(mot);
+		p = Pattern.compile(regex2);
+		Matcher m2 = p.matcher(mot);
+		p = Pattern.compile(regex3);
+		Matcher m3 = p.matcher(mot);
+		p = Pattern.compile(regex4);
+		Matcher m4 = p.matcher(mot);
+		p = Pattern.compile(regex5);
+		Matcher m5 = p.matcher(mot);
+		p = Pattern.compile(regex6);
+		Matcher m6 = p.matcher(mot);
 
-		Pattern p3 = Pattern.compile(regex3);
-		Matcher m3 = p3.matcher(mot);
-		
-		Pattern p4 = Pattern.compile(regex4);
-		Matcher m4 = p4.matcher(mot);
-
-		Pattern p5 = Pattern.compile(regex5);
-		Matcher m5 = p5.matcher(mot);
-		
-		if (m1.find() ||m2.find() ||m3.find()||m4.find()||m5.find()) {
+		if (m1.find() || m2.find() || m3.find() || m4.find() || m5.find()|| m6.find()) {
 			return false;
 		}
-		
-
-//		String regex1 = "[a-zA-Z]+";
-//		String regex2 = "[âêîôûàèìòùáéíóúäëïöüãõñç]+";
-//		Pattern p1 = Pattern.compile(regex1);
-//		Matcher m1 = p1.matcher(mot);
-//
-//		Pattern p2 = Pattern.compile(regex2);
-//		Matcher m2 = p2.matcher(mot);
-//
-//		if (m1.find()) {
-//			return true;
-//		}
-
-
-		// if (Pattern.compile("^\\p{IsLatin}*").matcher(mot).matches()) {
-		// return false;
-		// }
-		// if
-		// (Pattern.compile("[a-zA-Z]*|[âêîôûàèìòùáéíóúäëïöüãõñç]*").matcher(mot).matches())
-		// {
-		// return true;
-		// }
-		//
-		// if (Pattern.compile("(\\w)*").matcher(mot).matches()) {
-		// return false;
-		// }
-		// [\\w&&[âêîôûàèìòùáéíóúäëïöüãõñç]*]*
 
 		return true;
 	}
