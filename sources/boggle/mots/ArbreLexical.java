@@ -53,7 +53,7 @@ public class ArbreLexical {
 	 */
 	int atat = 0;
 	public boolean ajouter(String word) {
-	System.out.println(word);
+		// System.out.println(word);
 		if (this.contient(word)) {
 			return true;
 		} else {
