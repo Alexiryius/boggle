@@ -14,7 +14,7 @@ public class Test {
 //a.ajouterNouveau("BONJ");a.ajouterNouveau("BONJAUL");
 //a.toStrong();
 
-		System.out.println("réponse : "+a.contient("OEUVRAMESIMO"));
+		System.out.println("réponse : "+a.contient("PAIN"));
 
 
 		
