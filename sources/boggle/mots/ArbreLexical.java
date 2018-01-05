@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  * La classe ArbreLexical permet de stocker de façon compacte et d'accéder
  * rapidement à un ensemble de mots.
  */
-class ArbreLexical {
+public class ArbreLexical {
 	public static final int TAILLE_ALPHABET = 26;
 	public String lettre;
 	private boolean estMot; // vrai si le noeud courant est la fin d'un mot
@@ -22,7 +22,7 @@ class ArbreLexical {
 	// sous-arbres
 
 	/** Crée un arbre vide (sans aucun mot) */
-	protected ArbreLexical() {
+	public ArbreLexical() {
 		this.lettre = null;
 		this.estMot = false;
 		for (int i = 0; i < TAILLE_ALPHABET; i++) {
