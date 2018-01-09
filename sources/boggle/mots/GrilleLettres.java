@@ -23,16 +23,16 @@ public class GrilleLettres {
 		return tailleGrille;
 	}
 
-	public char[][] getTabCharGrille() {
-		return tabCharGrille;
-	}
 
 	public void setTabCharGrille(char[][] tabCharGrille) {
 		this.tabCharGrille = tabCharGrille;
 	}
 
+	/**
+	 * méthode qui remplit la grille de lettre à partir du De
+	 */
 	public void remplirGrille() {
-		de = new De();
+		de = new De(tailleGrille);
 		char[] lettres = de.getRetour();
 		int compt = 0;
 		for (int x = 0; x < tailleGrille; x++) {
@@ -43,6 +43,10 @@ public class GrilleLettres {
 		}
 	}
 
+	/** 
+	 * le toString va afficher sur la console d'affichage
+	 * le dessin et un tableau de lettre
+	 */
 	public String toString() {
 		String affichage = "";
 		String haut="\t\t         \\|||/\n"+"\t\t     	 (0 0)\n"+"\t\t,~ooO~~~~~( )~~~~~~~~~,\n"+"\t\t|                     |\n";
@@ -62,6 +66,10 @@ public class GrilleLettres {
 		}
 		affichage = haut + affichage + bas;
 		return affichage;
+	}
+
+	public char[][] getTabCharGrille() {
+		return tabCharGrille;
 	}
 
 }

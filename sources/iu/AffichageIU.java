@@ -1,9 +1,6 @@
 package iu;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Event;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.KeyEventDispatcher;
@@ -11,14 +8,11 @@ import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
 import javax.swing.AbstractButton;
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -28,15 +22,14 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
-import com.sun.glass.events.MouseEvent;
 
 import boggle.jeu.Config;
 import boggle.jeu.Joueur;
 import boggle.mots.ArbreLexical;
 import boggle.mots.GrilleLettres;
 import boggle.mots.Verifications;
-import clavier.Clavier;
 
+@SuppressWarnings("serial")
 public class AffichageIU extends JFrame {
 
 	// Les deux panels de ta fenetre

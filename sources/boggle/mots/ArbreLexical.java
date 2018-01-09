@@ -16,12 +16,13 @@ import java.util.regex.Pattern;
 public class ArbreLexical {
 	public static final int TAILLE_ALPHABET = 26;
 	public String lettre;
-	private boolean estMot; // vrai si le noeud courant est la fin d'un mot
-							// valide
-	ArbreLexical[] fils = new ArbreLexical[TAILLE_ALPHABET]; // les
-	// sous-arbres
+	/* vrai si le noeud courant est la fin d'un mot valide les sous-arbres */
+	private boolean estMot;
+	ArbreLexical[] fils = new ArbreLexical[TAILLE_ALPHABET];
 
-	/** Crée un arbre vide (sans aucun mot) */
+	/** 
+	 * Crée un arbre vide (sans aucun mot) 
+	 */
 	public ArbreLexical() {
 		this.lettre = null;
 		this.estMot = false;
@@ -39,6 +40,8 @@ public class ArbreLexical {
 
 	/**
 	 * Transforme un mot en minuscule et accent en mot en majuscule sans accent
+	 * @param s le mot à normaliser
+	 * @return le mo normalisé
 	 */
 	public static String aNormalise(String s) {
 		String temp = Normalizer.normalize(s, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
@@ -47,11 +50,9 @@ public class ArbreLexical {
 	}
 
 	/**
-	 * Place le mot spécifié dans l'arbre
-	 * 
-	 * @return <code>true</code> si le mot a été ajouté, <code>false</code> sinon
+	 * @param word
+	 * @return true si le mot a été ajouté, false sinon
 	 */
-	int atat = 0;
 	public boolean ajouter(String word) {
 		// System.out.println(word);
 		if (this.contient(word)) {
@@ -62,6 +63,10 @@ public class ArbreLexical {
 		}
 	}
 
+	/**
+	 * @param word un mot qui n'est pas encore dans le dictionnaire
+	 * @return true si le mot a été ajouté, false sinon
+	 */
 	public boolean ajouterNouveau(String word) {
 
 		String nWord = "";
@@ -94,27 +99,11 @@ public class ArbreLexical {
 
 	}
 
-//	public void toStrong() {
-//		System.out.println("");
-//		for (int i = 0; i < TAILLE_ALPHABET; i++) {
-//			try {
-//				if (this.fils[i] != null) {
-//					this.fils[i].toStrong();
-//					System.out.print((this.fils[i].lettre));
-//				}
-//			} catch (NullPointerException e) {
-//				System.out.println("exeption");
-//			}
-//		}
-//
-//	}
-
 	/**
-	 * Teste si l'arbre lexical contient le mot spécifié.
-	 *
-	 * @return true si word est un mot (String) contenu dans l'arbre, false si word
-	 *         n'est pas une instance de String ou si le mot n'est pas dans l'arbre
-	 *         lexical.
+	 * @param word un mot pas forcemment normalisé
+	 * @return true si word est un mot (String) contenu dans l'arbre, false si
+	 *         word n'est pas une instance de String ou si le mot n'est pas dans
+	 *         l'arbre lexical.
 	 */
 	public boolean contient(String word) {
 		if (word instanceof String == false && word.length() <= 0) {
@@ -126,9 +115,9 @@ public class ArbreLexical {
 	}
 
 	/**
-	 * 
-	 * @param word
-	 * @return
+	 * @param word un mot normalisé en majuscule et sans accent
+	 * @return true si word est un mot (String) contenu dans l'arbre, false si
+	 *         le mot n'est pas dans l'arbre lexical.
 	 */
 	public boolean contientNormalise(String word) {
 		// System.out.println("est-ce que " + word + " est dans l'arbre");
@@ -138,18 +127,15 @@ public class ArbreLexical {
 			nWord += word.charAt(i) + "";
 		}
 
-		// pour mettre à zero l'indice du caractère ascii 'A'
-
-		// si l'indice de la première lettre est stockée dans le fils de this et si le
+		// si l'indice de la première lettre est stockée dans le fils de this et
+		// si le
 		// fils contient la suite du mot
-
 		if (word.equals(""))
 			return false;
+		// pour mettre à zero l'indice du caractère ascii 'A'
 		int valueInt = word.charAt(0) - 65;
-		// System.out.println(valueInt);
 		try {
 			if (this.fils[valueInt] != null) {
-				// System.out.println((char) (valueInt + 65) + " existe dans l'arbre");
 				if (this.fils[valueInt].estMot && nWord.equals("")) {
 					return true;
 				} else {
@@ -163,10 +149,13 @@ public class ArbreLexical {
 
 	}
 
+	/* non encore codé */
 	/**
-	 * Ajoute à la liste resultat tous les mots de l'arbre commençant par le préfixe
-	 * spécifié.
+	 * Ajoute à la liste resultat tous les mots de l'arbre commençant par le
+	 * préfixe spécifié.
 	 * 
+	 * @param prefixe le préfixe spécifié.
+	 * @param resultat la liste resultat
 	 * @return true si resultat a été modifié, false sinon.
 	 */
 	public boolean motsCommencantPar(String prefixe, List<String> resultat) {
@@ -174,34 +163,27 @@ public class ArbreLexical {
 		return false;
 	}
 
-	// public boolean motsCPar(String motAj, List<String> listMots){
-	// motAj += this.lettre;
-	// System.out.println(this.estMot() +" "+ motAj);
-	// if(this.estMot()){
-	// listMots.add(motAj);
-	// return true;
-	// }
-	//
-	// for(int i = 0 ; i<TAILLE_ALPHABET ; i++){
-	// if(this.fils!= null && this.fils[i]!= null){
-	//
-	// System.out.println("entre la ");
-	// if(this.fils[i].motsCPar(motAj, listMots)){
-	// return true;
-	// }
-	// }
-	// else{
-	// return false;
-	// }
-	// motAj="";
-	// }
-	// return true;
-	//
-	//
-	// }
+	/* non encore codé */
+	/*
+	 * public boolean motsCPar(String motAj, List<String> listMots){ motAj +=
+	 * this.lettre; System.out.println(this.estMot() +" "+ motAj);
+	 * if(this.estMot()){ listMots.add(motAj); return true; }
+	 * 
+	 * for(int i = 0 ; i<TAILLE_ALPHABET ; i++){ if(this.fils!= null &&
+	 * this.fils[i]!= null){
+	 * 
+	 * System.out.println("entre la "); if(this.fils[i].motsCPar(motAj,
+	 * listMots)){ return true; } } else{ return false; } motAj=""; } return
+	 * true;
+	 * 
+	 * }
+	 */
 
 	/**
 	 * Crée un arbre lexical qui contient tous les mots du fichier spécifié.
+	 * 
+	 * @param fichier
+	 *            un fichier dictionnaire contenant des mots
 	 */
 	public void lireMots(String fichier) {
 
@@ -238,16 +220,25 @@ public class ArbreLexical {
 
 	/**
 	 * Fonction qui sert à savoir si un mot contient un chiffre, une lettre de
-	 * l'alphabet grec, un signe de ponctuation, des caractère spéciaux comme les
-	 * exposant ou le caractère lambda.
+	 * l'alphabet grec, un signe de ponctuation, des caractère spéciaux comme
+	 * les exposant ou le caractère lambda.
+	 * 
+	 * @param mot le mot à vérifier
+	 * @return false si le mot contient un des caractères spécifiés
 	 */
 	public boolean verifierMot(String mot) {
 
+		/* regex des chiffres*/
 		String regex1 = "\\d+";
+		/* regex des lettres grecques*/
 		String regex2 = "\\p{IsGreek}+";
+		/* regex des caractères de ponctuation*/
 		String regex3 = "\\p{Punct}+";
+		/* caractères en exposant */
 		String regex4 = "[\\u02B0-\\u1D49]+";
+		/* caractère micro mu */
 		String regex5 = "[\\u00B5]+";
+		/* caractère 2 en indice */
 		String regex6 = "[\\u2082]+";
 
 		Pattern p = Pattern.compile(regex1);
@@ -263,7 +254,7 @@ public class ArbreLexical {
 		p = Pattern.compile(regex6);
 		Matcher m6 = p.matcher(mot);
 
-		if (m1.find() || m2.find() || m3.find() || m4.find() || m5.find()|| m6.find()) {
+		if (m1.find() || m2.find() || m3.find() || m4.find() || m5.find() || m6.find()) {
 			return false;
 		}
 

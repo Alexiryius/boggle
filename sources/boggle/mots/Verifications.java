@@ -7,7 +7,6 @@ public class Verifications {
 	GrilleLettres grilleLettres;
 	char[][] grille;
 	int tailleGrille;
-	int positionCurseur = 0;
 
 	public Verifications(GrilleLettres maGrille) {
 		grilleLettres = maGrille;
@@ -15,14 +14,12 @@ public class Verifications {
 		grille = grilleLettres.getTabCharGrille();
 	}
 
-	public int getPositionCurseur() {
-		return positionCurseur;
-	}
-
-	public void setPositionCurseur(int positionCurseur) {
-		this.positionCurseur = positionCurseur;
-	}
-
+	/**
+	 * méthode qui return true si la première lettre du mot passé en paramètre est dans la grille de lettre
+	 * et si motEntier() return true
+	 * @param mot
+	 * @return
+	 */
 	public boolean estDansGrille(String mot) {
 		boolean dansGrille = false;
 		for (int x = 0; x < tailleGrille; x++) {
@@ -38,6 +35,17 @@ public class Verifications {
 		return dansGrille;
 	}
 
+	/**
+	 * Methode récurssive qui return true si un mot passé en paramètre est 
+	 * (une ou plusieurs fois) dans la grille de lettre. 
+	 * Recherche si la lettre suivante se trouve autour de la lettre actuelle que l'on pointe
+	 * (si la lettre à charAt(2) est autour de la lettre à charAt(1) du mot par exemple)
+	 * @param mot entier
+	 * @param pointeur sur la lettre suivante
+	 * @param valeurX de la lettre actuelle
+	 * @param valeurY de la lettre actuelle
+	 * @return
+	 */
 	public boolean motEntier(String mot, int pointeur, int valeurX, int valeurY) {
 		if (pointeur >= mot.length()) {
 			return true;
@@ -57,6 +65,14 @@ public class Verifications {
 
 	}
 
+	/**
+	 * return une Queue d'integer représentant le nombre de fois que la lettre 
+	 * recherchée est autour de la lettre actuelle de valeur x et y
+	 * @param a lettre a rechercher
+	 * @param valeurX de la lettre actuelle
+	 * @param valeurY de la lettre actuelle
+	 * @return
+	 */
 	public Queue<Integer> estSurCaseAutour(char a, int valeurX, int valeurY) {
 		Queue<Integer> coord = new LinkedList<Integer>();
 		for (int x = valeurX - 1; x <= valeurX + 1; x++) {

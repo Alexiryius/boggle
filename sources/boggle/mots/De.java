@@ -10,30 +10,54 @@ import java.util.Random;
  * @author rogeza radixr
  *
  */
+
 public class De {
 	private BufferedReader fichier_source;
 	private char[] retour;
 
-	public De() {
-		this.chercherLettre();
+	/**
+	 * 
+	 */
+	public De(int i) {
+		this.chercherLettre(i);
 	}
 
+	/**
+	 * @return
+	 */
 	public char[] getRetour() {
 		return retour;
 	}
 
+	/**
+	 * @param retour
+	 */
 	public void setRetour(char[] retour) {
 		this.retour = retour;
 	}
 
-	public void chercherLettre() {
-		retour = new char[16];
+	/**
+	 * de lettre au hasard à partir du fichier des-4*4 par défaut
+	 * on peut choisir un de de 5 ou de 6
+	 */
+	public void chercherLettre(int i) {
+		retour = new char[i*i];
 		String str;
 		Random rand = new Random();
 		int y = 0;
 
 		try {
-			String chemin = "config/des-4x4.csv";
+			String chemin;
+			if(i==5){
+				chemin = "config/des-5x5.csv";
+			}
+			else if(i==6){
+				chemin = "config/des-6x6.csv";
+			}
+			else{
+				chemin = "config/des-4x4.csv";
+			}
+		
 			fichier_source = new BufferedReader(new FileReader(chemin));
 
 			while ((str = fichier_source.readLine()) != null) {
@@ -42,9 +66,7 @@ public class De {
 				retour[y] = array[nombreAleatoire].charAt(0);
 				y++;
 			}
-			// for(int o = 0; o<=15;o++){
-			// System.out.println(retour[o]);
-			// }
+
 			fichier_source.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

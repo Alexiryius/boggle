@@ -21,6 +21,9 @@ public class Config {
 		init();
 	}
 
+	/** 
+	 * Methode qui va demander le nom des joueurs et le met dans le tableau de Joueur
+	 */
 	private void init() {
 		// initialisation du tableau de joueurs
 		joueurs = new Joueur[nbJoueurs];
