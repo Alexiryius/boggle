@@ -1,5 +1,4 @@
-package iu;
-
+package boggle.iu;
 import javax.swing.SwingUtilities;
 
 import boggle.jeu.Config;
@@ -15,7 +14,6 @@ public class RunAff {
 	public static void main(String[] args) {
 		
 		
-
 		Thread t1 = new Thread(new Runnable() {
 			public void run() {
 

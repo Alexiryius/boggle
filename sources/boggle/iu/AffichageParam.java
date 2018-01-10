@@ -1,4 +1,4 @@
-package iu;
+package boggle.iu;
 
 import javax.swing.*;
 

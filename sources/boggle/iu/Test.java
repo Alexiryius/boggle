@@ -1,4 +1,4 @@
-package iu;
+package boggle.iu;
 
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -15,7 +15,7 @@ public class Test extends JFrame {
 
 	private Document doc;
 	public Test() {
-		
+	
 		
 		JButton button = new JButton("Open XML");
 

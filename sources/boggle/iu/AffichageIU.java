@@ -1,4 +1,4 @@
-package iu;
+package boggle.iu;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -21,6 +21,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSplitPane;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import boggle.jeu.Config;
@@ -44,9 +45,10 @@ public class AffichageIU extends JFrame {
 	int width;
 	int panelHeight;
 	int panelWidth;
-	JButton[][] tab;
+	JLabel[][] tab;
 	char[][] tabgrille;
 	String motConstruit = "";
+	boolean finTour;
 
 	private GrilleLettres grille;
 	int tailleGrille;
@@ -72,6 +74,7 @@ public class AffichageIU extends JFrame {
 	JLabel titreMotDonnee;
 	JLabel motDonnee;
 	JLabel labelInfo;
+	JTextField textField;
 
 	Font fontLettres = new Font("sansserif", Font.BOLD, 18);// changement de font si besoin
 
@@ -110,11 +113,9 @@ public class AffichageIU extends JFrame {
 		// splitPane3s45.setEnabled(false);
 
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
 		this.pack();
 		this.setSize(width, height);
 		this.setContentPane(splitPane3s45);
-
 		this.setVisible(true);
 
 		startGame();
@@ -126,7 +127,7 @@ public class AffichageIU extends JFrame {
 
 		// on boucle tant que le joueur n'a pas atteint le score max ou le nombre de
 		// manche max
-		afficherBtnLblPanel3(panel3);
+		afficherBtnLblPanel3(panel3, panelHeight, panelWidth);
 		do {
 			// on instancie l'objet qui vérifie les mots de cette grille
 			grille = new GrilleLettres(tailleGrille);
@@ -135,17 +136,18 @@ public class AffichageIU extends JFrame {
 			// compter en double
 			motsDejaDonnes = new ArrayList<String>();
 			int manche = getTour() / config.getNbJoueurs() + 1;
+			finTour = false;
 			labelComptManche = new JLabel(manche + "");
 
-			afficherScore(joueurs);
+			afficherScore(joueurs, panelHeight, panelWidth);
 
 			tabgrille = grille.getTabCharGrille();
 			// afficherBtnLblPanel3(panel3);
 			affichTabLettres(panel3, tailleGrille, panelHeight, panelWidth);
 
-			System.out.println("avant");
-			waitForEnter();
-			System.out.println("suite");
+			while (!finTour) {
+				waitForEnter();
+			}
 			// Incrémentation du tour
 			this.setTour();
 		} while ((joueurs[tour % config.getNbJoueurs()].getScore() < config.getScoreMax())
@@ -153,13 +155,14 @@ public class AffichageIU extends JFrame {
 
 		// affichage final
 		System.out.println("Score final : \n");
-		afficherScore(joueurs);
+		afficherScore(joueurs, panelHeight, panelWidth);
 		this.declarerGagnant(joueurs);
 	}
 
 	public class EcouteurBoutonFinTour implements ActionListener {
 		public void actionPerformed(ActionEvent clic) {
-
+			effacerTabLettres();
+			finTour = true;
 		}
 	}
 
@@ -202,7 +205,7 @@ public class AffichageIU extends JFrame {
 
 	public void KeyEnter() {
 		if (!motConstruit.equals("")) {
-			
+
 			// récupération de l'entrée standard
 			// on supprime les accents et on met en majuscule
 
@@ -215,9 +218,8 @@ public class AffichageIU extends JFrame {
 					if (arbre.contient(motConstruit.toLowerCase())) {
 						// vérification dans les mots déjà dits
 						if (motsDejaDonnes.contains(motConstruit)) {
-							
-							new ChangerUnLabelUnMoment(labelInfo,
-									"Appuyez sur Entrer une fois que votre mot est construit",
+
+							new ChangerUnLabelUnMoment(labelInfo, "Tapez un mot qui existe",
 									"Vous avez déjà donné ce mot.", 4);
 						} else {
 							// on ajoute le mot dans l'historique
@@ -230,15 +232,15 @@ public class AffichageIU extends JFrame {
 									+ joueurs[tour % config.getNbJoueurs()].getScore() + "\n");
 						}
 					} else {
-						new ChangerUnLabelUnMoment(labelInfo, "Appuyez sur Entrer une fois que votre mot est construit",
+						new ChangerUnLabelUnMoment(labelInfo, "Tapez un mot qui existe",
 								"Ce mot n'existe pas dans le dictionnaire", 4);
 					}
 				} else {
-					new ChangerUnLabelUnMoment(labelInfo, "Appuyez sur Entrer une fois que votre mot est construit",
-							"Ce mot n'est pas dans la grille", 4);
+					new ChangerUnLabelUnMoment(labelInfo, "Tapez un mot qui existe", "Ce mot n'est pas dans la grille",
+							4);
 				}
 			} else {
-				new ChangerUnLabelUnMoment(labelInfo, "Appuyez sur Entrer une fois que votre mot est construit",
+				new ChangerUnLabelUnMoment(labelInfo, "Tapez un mot qui existe",
 						"Les mots nécessitent au moins 3 caractères", 4);
 			}
 
@@ -247,10 +249,9 @@ public class AffichageIU extends JFrame {
 			}
 		} else {
 
-			new ChangerUnLabelUnMoment(labelInfo, "Appuyez sur Entrer une fois que votre mot est construit",
-					"Vous n'avez pas construit de mot", 3);
+			new ChangerUnLabelUnMoment(labelInfo, "Tapez un mot qui existe", "Vous n'avez pas construit de mot", 3);
 		}
-//		remonterTabLettres();
+		// remonterTabLettres();
 
 	}
 
@@ -305,48 +306,52 @@ public class AffichageIU extends JFrame {
 	}
 
 	public void affichTabLettres(JPanel panel, int tailleGrille, int hauteur, int largeur) {
-		tab = new JButton[tailleGrille][tailleGrille];
+		tab = new JLabel[tailleGrille][tailleGrille];
 		int debutGauche = (largeur - (tailleGrille * 50)) / 2;
 		int debutHaut = ((hauteur * 4 / 5) - (tailleGrille * 50)) / 2;
 		for (int i = 0; i < tailleGrille; i++) {
 			for (int y = 0; y < tailleGrille; y++) {
-				tab[i][y] = createJButton();// on crée les JLabel et on met dans tab
+				tab[i][y] = createJLabel();// on crée les JLabel et on met dans tab
 				remplirTabLettres(tab[i][y], i, y);
-				tab[i][y].setBounds((i * 50) + debutGauche, (y * 50) + debutHaut, 50, 50);
-				panel.add(tab[i][y]);
 
+				panel.add(tab[i][y]);
+				tab[i][y].setBounds((i * 50) + debutGauche, (y * 50) + debutHaut, 50, 50);
 			}
 		}
+
 	}
-	
-	public void remonterTabLettres() {
+
+	public void effacerTabLettres() {
 		for (int i = 0; i < tailleGrille; i++) {
 			for (int y = 0; y < tailleGrille; y++) {
-				tab[i][y].setSelected(false);
-				tab[i][y].setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+				tab[i][y].setText("");
+
 			}
 		}
 	}
 
-	public void afficherBtnLblPanel3(JPanel panel) {
+	public void afficherBtnLblPanel3(JPanel panel, int hauteur, int largeur) {
 		labelManche = new JLabel("Tour n°");
 		labelComptManche = new JLabel("0");
-		labelInfo = new JLabel("Appuyez sur Entrer une fois que votre mot est construit");
-
+		textField = new JTextField();
+		labelInfo = new JLabel("Tapez un mot qui existe");
+		textField.setToolTipText("Appuyez sur \"Entrée\" quand votre mot est construit");
 		panel.add(labelManche);
 		panel.add(labelComptManche);
 		panel.add(boutonFinTour);
+		panel.add(textField);
 		panel.add(labelInfo);
 
-		labelManche.setBounds(692, 200, 50, 50);
-		labelComptManche.setBounds(740, 200, 50, 50);
-		boutonFinTour.setBounds(1050, 800, 100, 50);
-		labelInfo.setBounds(570, 600, 1000, 50);
+		labelManche.setBounds((largeur / 2) - 35, (hauteur / 7), 55, 50);
+		labelComptManche.setBounds((largeur / 2) + 20, (hauteur / 7), 50, 50);
+		boutonFinTour.setBounds((largeur - 300), (hauteur - 150), 150, 50);
+		textField.setBounds((largeur / 2) - 180, (hauteur / 2) + 50, 360, 25);
+		labelInfo.setBounds((largeur / 2) - 180, (hauteur / 2) + 75, 360, 25);
 		boutonFinTour.addActionListener(new EcouteurBoutonFinTour());
 
 	}
 
-	public void afficherScore(Joueur[] joueurs) {
+	public void afficherScore(Joueur[] joueurs, int hauteur, int largeur) {
 		scoreJoueur = new JLabel("");
 		titreMotDonnee = new JLabel("Mots déjà données");
 		motDonnee = new JLabel("");
@@ -357,6 +362,10 @@ public class AffichageIU extends JFrame {
 		panel4.add(scoreJoueur);
 		panel4.add(titreMotDonnee);
 		panel4.add(scoreJoueur);
+
+		labelManche.setBounds((largeur / 2) - 35, (hauteur / 7), 55, 50);
+		labelComptManche.setBounds((largeur / 2) + 20, (hauteur / 7), 50, 50);
+		boutonFinTour.setBounds((largeur - 300), (hauteur - 150), 150, 50);
 
 	}
 
@@ -417,32 +426,13 @@ public class AffichageIU extends JFrame {
 		}
 	}
 
-	public void remplirTabLettres(JButton bouton, int x, int y) {
+	public void remplirTabLettres(JLabel label, int x, int y) {
 
-		bouton.setText(tabgrille[x][y] + "");
-		bouton.setFont(fontLettres);
-		bouton.setHorizontalAlignment(SwingConstants.CENTER);
-		bouton.setVerticalAlignment(SwingConstants.CENTER);
-		bouton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-		bouton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (bouton.isSelected()) {
-					bouton.setSelected(false);
-					// bouton.setEnabled(false);
-					bouton.setBorder(
-							javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-					motConstruit = motConstruit.substring(1, motConstruit.length() - 1);
-				} else {
-					bouton.setSelected(true);
-					// bouton.setEnabled(true);
-					bouton.setBorder(
-							javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-					motConstruit += e.getActionCommand();
-				}
-				System.out.println("motConstruit : " + motConstruit);
-
-			}
-		});
+		label.setText(tabgrille[x][y] + "");
+		label.setFont(fontLettres);
+		label.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+		label.setHorizontalAlignment(SwingConstants.CENTER);
+		label.setVerticalAlignment(SwingConstants.CENTER);
 
 	}
 
@@ -456,8 +446,8 @@ public class AffichageIU extends JFrame {
 
 	}
 
-	public JButton createJButton() {
-		JButton jl = new JButton();
+	public JLabel createJLabel() {
+		JLabel jl = new JLabel();
 
 		return jl;
 	}

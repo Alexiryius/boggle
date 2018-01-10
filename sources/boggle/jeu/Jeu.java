@@ -23,7 +23,7 @@ public class Jeu {
 
 		this.startGame();		
 	}
-
+	
 	public void startGame() {
 		// début du jeu
 
