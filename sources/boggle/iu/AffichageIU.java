@@ -4,31 +4,31 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.KeyEventDispatcher;
-import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.text.Normalizer;
 import java.util.ArrayList;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import javax.swing.AbstractButton;
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JSplitPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
 
 import boggle.jeu.Config;
 import boggle.jeu.Joueur;
@@ -56,7 +56,6 @@ public class AffichageIU extends JFrame {
 	JLabel[][] tab;
 	char[][] tabgrille;
 	String motConstruit = "";
-	boolean finTour;
 
 	private GrilleLettres grille;
 	int tailleGrille;
@@ -78,15 +77,18 @@ public class AffichageIU extends JFrame {
 	JButton boutonFinTour = new JButton("Fin du Tour");
 	JButton boutonMotTrouve = new JButton("Ok");
 	JLabel labelManche;
-	JLabel scoreJoueur;
+	JLabel nomJoueur;
 	JLabel titreMotDonnee;
-	JLabel motDonnee;
+	JList<String> listeMotDonnes;
 	JLabel labelInfo;
 	JTextField textField;
 
+	JLabel nomJoueurSuivant;
+
 	int manche = 1;
 
-	Font fontLettres = new Font("sansserif", Font.BOLD, 18);// changement de font si besoin
+	Font fontLettres = new Font("sansserif", Font.BOLD, 18);// changement de
+															// font si besoin
 
 	// Constructeur de ta fenêtre
 	public AffichageIU(Config config) {
@@ -106,15 +108,21 @@ public class AffichageIU extends JFrame {
 
 		panelCentral.setBackground(new Color(153, 204, 255));
 		panelCentral.setLayout(new GridBagLayout());
-		afficherBtnLblPanel3(panelHeight, panelWidth);
-		remplirGrilleLettres();
+	    panelCentral.setBorder(BorderFactory.createBevelBorder(2));
+		afficherPanelCentral(panelHeight, panelWidth);
+		remplirPanelCentral();
 
 		panelPointJoueur.setBackground(new Color(204, 153, 255));
 		panelPointJoueur.setLayout(new BorderLayout());
-		afficherScore(panelPointJoueur, joueurs, panelHeight, panelWidth);
+		panelPointJoueur.setBorder(BorderFactory.createBevelBorder(2));
+		afficherPanelScore(joueurs, panelHeight, panelWidth);
+		remplirPanelScore();
 
 		panelJoueurSuivant.setBackground(new Color(255, 153, 255));
-		panelPointJoueur.setLayout(new BorderLayout());
+		panelJoueurSuivant.setLayout(new BorderLayout());
+		panelJoueurSuivant.setBorder(BorderFactory.createBevelBorder(2));
+		afficherPanelJoueurSuivant(panelHeight, panelWidth);
+		remplirPanelJoueurSuivant();
 
 		panelPrincipal.setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
@@ -154,32 +162,19 @@ public class AffichageIU extends JFrame {
 
 	public class EcouteurBoutonFinTour implements ActionListener {
 		public void actionPerformed(ActionEvent clic) {
-			tour++;
-			manche = (getTour() / config.getNbJoueurs()) + 1;
-
+			
+			motsDejaDonnes = null;
+			System.out.println(tour + " <- tour / manche -> " + manche);
+			
 			effacerTabLettres();
-			remplirGrilleLettres();
-			motsDejaDonnes = new ArrayList<String>();
-			afficherScore(panelPointJoueur, joueurs, panelHeight, panelWidth);
+			effacerLabelManche();
+			remplirPanelCentral();
 
-			finTour = false;
+			effacerScore();
+			remplirPanelScore();
 
-			if ((joueurs[tour % config.getNbJoueurs()].getScore() >= config.getScoreMax())
-					&& (tour / config.getNbJoueurs() >= config.getNbMancheMax())) {
-				System.out.println("Score final : \n");
-				finPartieEffacer();
-				declarerGagnant(joueurs);
-			}
-		}
-	}
+			remplirPanelJoueurSuivant();
 
-	public class IsKeyPressed {
-		private volatile boolean wPressed = false;
-
-		public boolean isWPressed() {
-			synchronized (IsKeyPressed.class) {
-				return wPressed;
-			}
 		}
 	}
 
@@ -187,6 +182,7 @@ public class AffichageIU extends JFrame {
 		public void actionPerformed(ActionEvent clic) {
 			motConstruit = textField.getText().toUpperCase();
 			KeyEnter();
+			remplirPanelScoreMots();
 		}
 	}
 
@@ -207,7 +203,9 @@ public class AffichageIU extends JFrame {
 									"Vous avez déjà donné ce mot.", 4);
 						} else {
 							// on ajoute le mot dans l'historique
+							
 							motsDejaDonnes.add(motConstruit);
+
 							// on calcule les points apportés par le mot
 							int points = calculerPoints(motConstruit);
 							new ChangerUnLabelUnMoment(labelInfo, "Tapez un mot qui existe", "Bravo ! ", 4);
@@ -270,65 +268,135 @@ public class AffichageIU extends JFrame {
 
 	}
 
-	public void afficherBtnLblPanel3(int hauteur, int largeur) {
+	public void afficherPanelCentral(int hauteur, int largeur) {
 
 		textField = new JTextField();
 		labelInfo = new JLabel("Entrez un mot qui existe");
 		textField.setToolTipText("Appuyez sur \"Ok\" quand votre mot est construit");
-		textField.setPreferredSize(new Dimension(100, 25));
-		textField.setMinimumSize(new Dimension(100, 25));
-		
+		textField.setPreferredSize(new Dimension(300, 25));
+		textField.setMinimumSize(new Dimension(300, 25));
+
 		gbcPanelCentral.gridx = 1;
 		gbcPanelCentral.gridy = 6;
 		gbcPanelCentral.gridwidth = 3;
 		gbcPanelCentral.fill = GridBagConstraints.NONE;
 		panelCentral.add(textField, gbcPanelCentral);
-	
-		gbcPanelCentral.gridx = 3;
-		gbcPanelCentral.gridy = 6;
-		gbcPanelCentral.gridwidth = 1;
+
+		gbcPanelCentral.gridx = 1;
+		gbcPanelCentral.gridy = 8;
+		gbcPanelCentral.gridwidth = 3;
 		gbcPanelCentral.fill = GridBagConstraints.BOTH;
 		panelCentral.add(boutonMotTrouve, gbcPanelCentral);
-		
+
 		gbcPanelCentral.gridx = 1;
 		gbcPanelCentral.gridy = 7;
 		gbcPanelCentral.gridwidth = 3;
 		panelCentral.add(labelInfo, gbcPanelCentral);
-		
+
 		boutonMotTrouve.addActionListener(new EcouteurBoutonMotTrouve());
 
 	}
 
-	public void remplirGrilleLettres() {
-
-		
+	public void remplirPanelCentral() {
 
 		panelGrilleLettre.setPreferredSize(new Dimension(300, 300));
 		panelGrilleLettre.setLayout(new GridLayout(4, 4));
 
 		labelManche = new JLabel();
-		
-		affichLabelManche(manche);
-		
-		
+		affichLabelManche();
+
 		grille = new GrilleLettres(tailleGrille);
 		verif = new Verifications(grille);
 		tabgrille = grille.getTabCharGrille();
 		affichTabLettres(panelGrilleLettre, tailleGrille, panelHeight, panelWidth);
-		
+
 		gbcPanelCentral.gridx = 1;
 		gbcPanelCentral.gridy = 0;
-		gbcPanelCentral.gridwidth = 4;
-		gbcPanelCentral.gridwidth = GridBagConstraints.REMAINDER;
+		gbcPanelCentral.gridwidth = 3;
 		panelCentral.add(labelManche, gbcPanelCentral);
 
 		gbcPanelCentral.gridx = 1;
 		gbcPanelCentral.gridy = 1;
-		gbcPanelCentral.gridwidth = 4;
-		gbcPanelCentral.gridheight =4;
-		gbcPanelCentral.gridwidth = GridBagConstraints.REMAINDER;
+		gbcPanelCentral.gridwidth = 3;
+		gbcPanelCentral.gridheight = 3;
 		panelCentral.add(panelGrilleLettre, gbcPanelCentral);
 
+	}
+
+	public void afficherPanelScore(Joueur[] joueurs, int hauteur, int largeur) {
+
+		nomJoueur = new JLabel();
+		nomJoueur.setHorizontalAlignment(JLabel.CENTER);
+		nomJoueur.setVerticalAlignment(JLabel.CENTER);
+		nomJoueur.setBorder(BorderFactory.createBevelBorder(1));
+		
+		titreMotDonnee = new JLabel();
+		listeMotDonnes = new JList<String>();
+		listeMotDonnes.setBackground(new Color(204, 153, 255));
+
+		panelPointJoueur.add(boutonFinTour, BorderLayout.SOUTH);
+		panelPointJoueur.add(nomJoueur, BorderLayout.NORTH);
+		panelPointJoueur.add(listeMotDonnes, BorderLayout.CENTER);
+
+		boutonFinTour.addActionListener(new EcouteurBoutonFinTour());
+
+	}
+
+	public void remplirPanelScore() {
+
+		if ((joueurs[tour % config.getNbJoueurs()].getScore() >= config.getScoreMax())
+				&& (tour / config.getNbJoueurs() >= config.getNbMancheMax())) {
+			System.out.println("Score final : \n");
+			finPartieEffacer();
+			declarerGagnant(joueurs);
+		} else {
+
+			tour++;
+			manche = (tour / config.getNbJoueurs()) + 1;
+			nomJoueur.setText(" A " + joueurs[tour % config.getNbJoueurs()].getName() + " de jouer");
+
+		}
+		System.out.println(joueurs[tour % config.getNbJoueurs()].getScore() + " <-/-> " + config.getScoreMax());
+		System.out.println(tour / config.getNbJoueurs() + " <-/-> " + config.getNbMancheMax());
+
+		panelPointJoueur.add(boutonFinTour, BorderLayout.SOUTH);
+		panelPointJoueur.add(nomJoueur, BorderLayout.NORTH);
+	}
+
+	public void remplirPanelScoreMots() {
+
+		DefaultListModel<String> listModel = new DefaultListModel<String>();
+		
+		listModel.addElement("Mots déjà donnés :" );
+		for(int index=0; index<motsDejaDonnes.size(); index++)
+		{
+
+		     listModel.addElement(motsDejaDonnes.get(index));
+		}
+		
+		
+		listeMotDonnes.setModel(listModel);
+		
+		DefaultListCellRenderer renderer = (DefaultListCellRenderer)listeMotDonnes.getCellRenderer();
+		renderer.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		
+		JLabel labelo = new JLabel("totot");
+		
+		panelPointJoueur.add(listeMotDonnes, BorderLayout.CENTER);
+
+	}
+
+	public void afficherPanelJoueurSuivant(int hauteur, int largeur) {
+		nomJoueurSuivant = new JLabel();
+		nomJoueurSuivant.setHorizontalAlignment(JLabel.CENTER);
+		nomJoueurSuivant.setVerticalAlignment(JLabel.CENTER);
+		nomJoueurSuivant.setBorder(BorderFactory.createBevelBorder(1));
+		panelJoueurSuivant.add(nomJoueurSuivant, BorderLayout.NORTH);
+	}
+
+	public void remplirPanelJoueurSuivant() {
+		nomJoueurSuivant.setText(joueurs[(tour + 1) % config.getNbJoueurs()].getName() + " est le suivant");
 	}
 
 	public void getTailleFenetre() {
@@ -350,8 +418,12 @@ public class AffichageIU extends JFrame {
 
 	}
 
-	public void affichLabelManche(int manche) {
+	public void affichLabelManche() {
 		labelManche.setText("Manche n° " + manche);
+	}
+
+	public void effacerLabelManche() {
+		labelManche.setText("        ");
 	}
 
 	public void effacerTabLettres() {
@@ -365,31 +437,17 @@ public class AffichageIU extends JFrame {
 
 	}
 
+	public void effacerScore() {
+		panelPointJoueur.removeAll();
+	}
+
 	public void finPartieEffacer() {
 		boutonFinTour.setEnabled(false);
 		boutonMotTrouve.setEnabled(false);
+		effacerLabelManche();
 		labelManche.setText("Fin de Partie");
 		labelInfo.setText("");
 		textField.setEnabled(false);
-	}
-
-	public void afficherScore(JPanel panel, Joueur[] joueurs, int hauteur, int largeur) {
-		scoreJoueur = new JLabel("");
-		titreMotDonnee = new JLabel("Mots déjà données");
-		motDonnee = new JLabel("");
-		for (Joueur joueur : joueurs) {
-			scoreJoueur.setText(joueur + "");
-		}
-
-		
-		panel.add(boutonFinTour);
-		panel.add(scoreJoueur);
-		panel.add(titreMotDonnee);
-		panel.add(scoreJoueur);
-		
-
-		boutonFinTour.addActionListener(new EcouteurBoutonFinTour());
-
 	}
 
 	public int calculerPoints(String mot) {
@@ -433,7 +491,8 @@ public class AffichageIU extends JFrame {
 				if (gagnant.equals("")) {
 					gagnant += joueur[i].getName();
 				} else {
-					// s'il y a plusieurs joueurs avec le même score on passe la variable unique a
+					// s'il y a plusieurs joueurs avec le même score on passe la
+					// variable unique a
 					// false
 					unique = false;
 					gagnant += ", " + joueur[i].getName();
