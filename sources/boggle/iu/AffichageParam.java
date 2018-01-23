@@ -1,17 +1,37 @@
 package boggle.iu;
 
-import javax.swing.*;
-
-import com.sun.javafx.iio.ImageLoader;
-
-import boggle.jeu.Config;
-
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
+import boggle.jeu.Config;
+import boggle.jeu.Joueur;
+import clavier.Clavier;
+
+/**
+ * @author radixr rogeza
+ *classe qui permet de lancer la fenètre de paramètrage du jeu en interface graphique
+ */
+@SuppressWarnings("serial")
 public class AffichageParam extends JFrame {
 
 	Font font = new Font("Monospaced", Font.PLAIN, 12);// changement de font si besoin
@@ -21,9 +41,22 @@ public class AffichageParam extends JFrame {
 	int nombreScore = 0;
 	JLabel labelNbreScore;
 
+	JDialog dialog;
+	@SuppressWarnings("rawtypes")
+	JComboBox comboNombreJoueur;
+	@SuppressWarnings("rawtypes")
+	JComboBox comboTaillegrille;
+	@SuppressWarnings("rawtypes")
+	JComboBox comboNombreManche;
+	@SuppressWarnings("rawtypes")
+	JComboBox comboNombreScore;
 
+	/**
+	 * constructeur qui va afficher la fenêtre avec le bouton du jeu 
+	 * et lancer la partie avec la fenetre de paramètre
+	 */
 	public AffichageParam() {
-	
+
 		setBounds(500, 300, 800, 500);
 		this.setExtendedState(this.getExtendedState() | Frame.MAXIMIZED_BOTH);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -40,10 +73,13 @@ public class AffichageParam extends JFrame {
 		});
 	}
 
+	/**
+	 * méthode qui construit la fenêtre dialog pour rentrer les paramètre du jeu
+	 */
 	private void showDialog() {
 
 //		// création de la fenètre dialog
-		JDialog dialog = new JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);
+		dialog = new JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);
 
 		dialog.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20)); // pour inserer un panel au centre avec 20 pixels de
 		// margin H et V
@@ -74,7 +110,7 @@ public class AffichageParam extends JFrame {
 		panelNbreJoueur.setBackground(Color.white);
 	
 		
-		JComboBox comboNombreJoueur = new JComboBox();
+		 comboNombreJoueur = new JComboBox();
 		comboNombreJoueur.setFont(font);
 		comboNombreJoueur.addItem("choisissez nombre de joueur");
 		for (int i = 2; i < 6; i++)
@@ -88,7 +124,7 @@ public class AffichageParam extends JFrame {
 		panelTailleGrille.setBackground(Color.white);
 	
 		
-		JComboBox comboTaillegrille = new JComboBox();
+		 comboTaillegrille = new JComboBox();
 		comboTaillegrille.setFont(font);
 		comboTaillegrille.addItem("choisissez une taille de grille");
 		for (int i = 4; i < 7; i++)
@@ -101,7 +137,7 @@ public class AffichageParam extends JFrame {
 		panelNbreManche.setBackground(Color.white);
 
 
-		JComboBox comboNombreManche = new JComboBox();
+		 comboNombreManche = new JComboBox();
 		comboNombreManche.setFont(font);
 		comboNombreManche.addItem("choisissez nombre de manche");
 		for (int i = 2; i < 11; i++)
@@ -115,7 +151,7 @@ public class AffichageParam extends JFrame {
 	
 
 		labelNbreScore.setFont(font);
-		JComboBox comboNombreScore = new JComboBox();
+		 comboNombreScore = new JComboBox();
 		comboNombreScore.setFont(font);
 		comboNombreScore.addItem("choisissez un score à atteindre");
 		for (int i = 10; i < 201; i++)
@@ -167,9 +203,49 @@ public class AffichageParam extends JFrame {
 					labelNbreScore.setText(messageText);
 				} else {
 					fermerLeFenetre();
-					Config config = new Config(tailleGrille, nombreJoueur, nombreManche, nombreScore);
-					RunAff.config = config;
-					new AffichageIU(config);
+					
+					Joueur[] joueurs = new Joueur[nombreJoueur];
+
+					
+					switch (nombreJoueur) {
+					case 2:
+						joueurs[0]= new Joueur("riri");
+						joueurs[1]= new Joueur("fifi");
+						break;
+					 case 3: 
+						  joueurs[0]= new Joueur("riri");
+						  joueurs[1]= new Joueur("fifi");
+						  joueurs[2]= new Joueur("loulou");
+						  break;
+					 case 4:
+						  joueurs[0]= new Joueur("riri");
+						  joueurs[1]= new Joueur("fifi");
+						  joueurs[2]= new Joueur("loulou");
+						  joueurs[3]= new Joueur("coco");
+						  break;
+					 case 5:        
+						  joueurs[0]= new Joueur("riri");
+						  joueurs[1]= new Joueur("fifi");
+						  joueurs[2]= new Joueur("loulou");
+						  joueurs[3]= new Joueur("coco");
+						  joueurs[4]= new Joueur("lulu");
+						  break;  
+					 case 6:        
+						  joueurs[0]= new Joueur("riri");
+						  joueurs[1]= new Joueur("fifi");
+						  joueurs[2]= new Joueur("loulou");
+						  joueurs[3]= new Joueur("coco");
+						  joueurs[4]= new Joueur("lulu");
+						  joueurs[5]= new Joueur("jacques");
+						  break;  
+					 default:
+						  joueurs[0]= new Joueur("riri");
+						  joueurs[1]= new Joueur("fifi");
+						  break;
+					}
+
+					Config config = new Config(tailleGrille, nombreJoueur, nombreManche, nombreScore, joueurs);
+					new AffichageJeu(config);
 				}
 
 			}
@@ -270,12 +346,20 @@ public class AffichageParam extends JFrame {
 		
 	}
 
+	/**
+	 *methode qui ferme la fenètre principale et ja fenetre dialog 
+	 *et libère les ressources 
+	 */
 	public void fermerLeFenetre() {
+
 		this.setVisible(false);
 		this.dispose();// Pour libérer les ressources.
 	}
 
-
+	/**
+	 * méthode principale de lancement
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		new AffichageParam();
 	}

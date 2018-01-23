@@ -3,6 +3,10 @@ package boggle.mots;
 import java.util.LinkedList;
 import java.util.Queue;
 
+/**
+ * @author radixr rogeza
+ * Classe permettant de vérifier si les mot sont bien dans la grille donnée
+ */
 public class Verifications {
 	GrilleLettres grilleLettres;
 	char[][] grille;
@@ -18,7 +22,7 @@ public class Verifications {
 	 * méthode qui return true si la première lettre du mot passé en paramètre est dans la grille de lettre
 	 * et si motEntier() return true
 	 * @param mot
-	 * @return
+	 * @return true si le mot est dans la grille
 	 */
 	public boolean estDansGrille(String mot) {
 		boolean dansGrille = false;
@@ -44,7 +48,8 @@ public class Verifications {
 	 * @param pointeur sur la lettre suivante
 	 * @param valeurX de la lettre actuelle
 	 * @param valeurY de la lettre actuelle
-	 * @return
+	 * @return true si un mot passé en paramètre est 
+	 * (une ou plusieurs fois) dans la grille de lettre
 	 */
 	public boolean motEntier(String mot, int pointeur, int valeurX, int valeurY) {
 		if (pointeur >= mot.length()) {
@@ -71,7 +76,8 @@ public class Verifications {
 	 * @param a lettre a rechercher
 	 * @param valeurX de la lettre actuelle
 	 * @param valeurY de la lettre actuelle
-	 * @return
+	 * @return un Queue représentant le nombre de fois que la lettre 
+	 * recherchée est autour de la lettre actuelle
 	 */
 	public Queue<Integer> estSurCaseAutour(char a, int valeurX, int valeurY) {
 		Queue<Integer> coord = new LinkedList<Integer>();

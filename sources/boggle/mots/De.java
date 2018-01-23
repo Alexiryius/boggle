@@ -8,22 +8,18 @@ import java.util.Random;
 
 /**
  * @author rogeza radixr
- *
+ * Classe DE permettant de donner un tableau de caractère en retour
  */
-
 public class De {
 	private BufferedReader fichier_source;
 	private char[] retour;
 
-	/**
-	 * 
-	 */
 	public De(int i) {
 		this.chercherLettre(i);
 	}
 
 	/**
-	 * @return
+	 * @return retour le tableau de char
 	 */
 	public char[] getRetour() {
 		return retour;

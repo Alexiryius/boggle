@@ -4,6 +4,10 @@ import clavier.Clavier;
 import java.lang.*;
 import java.util.*;
 
+/**
+ * @author rogeza radixr
+ *Classe qui permet de lancer le jeu en mode console sans interface graphique
+ */
 public class Run {
 	public static int nbJoueurs, tailleGrille, nbManches, scoreMax;
 

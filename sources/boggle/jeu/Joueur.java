@@ -1,5 +1,9 @@
 package boggle.jeu;
 
+/**
+ * @author radixr rogeza
+ * Classe permettant de construire un joeur avec son score associé
+ */
 public class Joueur {
 	// score et nom du joueur
 	private int score;

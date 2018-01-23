@@ -1,13 +1,18 @@
 package boggle.jeu;
 
-import boggle.jeu.*;
-import boggle.mots.*;
-import clavier.Clavier;
-import java.lang.*;
-import java.util.*;
-import java.io.*;
 import java.text.Normalizer;
+import java.util.ArrayList;
 
+import boggle.mots.ArbreLexical;
+import boggle.mots.GrilleLettres;
+import boggle.mots.Verifications;
+import clavier.Clavier;
+
+/**
+ * @author radixr rogeza
+ * Classe qui permet de lancer le jeu et le controler pour le  mode console
+ *
+ */
 public class Jeu {
 
 	private int tour = 0;

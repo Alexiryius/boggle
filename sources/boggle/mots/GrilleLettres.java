@@ -1,7 +1,10 @@
 package boggle.mots;
 
+import boggle.jeu.Joueur;
+
 /**
  * @author rogeza radixr
+ * Classe construisant une grille de lettre
  */
 public class GrilleLettres {
 
@@ -22,7 +25,6 @@ public class GrilleLettres {
 	public int getTailleGrille() {
 		return tailleGrille;
 	}
-
 
 	public void setTabCharGrille(char[][] tabCharGrille) {
 		this.tabCharGrille = tabCharGrille;
@@ -49,23 +51,39 @@ public class GrilleLettres {
 	 */
 	public String toString() {
 		String affichage = "";
+		String espaceLibre ="";
 		String haut="\t\t         \\|||/\n"+"\t\t     	 (0 0)\n"+"\t\t,~ooO~~~~~( )~~~~~~~~~,\n"+"\t\t|                     |\n";
 		String bas="\t\t|                     |\n"+"\t\t`~~~~~~~~~~~~~~~~~oo0~`\n"+"\t\t       |__| |__|\n"+"\t\t        ||   ||\n"+"\t\t       ooO   Ooo \n";
 		
+		switch (tailleGrille) {
+		 case 4:
+			 espaceLibre = "      ";
+			   break;
+		 case 5:        
+			 espaceLibre =  "     ";
+			 break;
+		 case 6:        
+			 espaceLibre =  "    ";
+			 break;
+		}
+		
 		for (int x = 0; x < tailleGrille; x++) {
-			affichage += "\t\t|      ";
+			
+			affichage += "\t\t|"+espaceLibre;
 			for (int y = 0; y < tailleGrille; y++) {
 				affichage += "|" + tabCharGrille[x][y] + "";
 			}
 			if (x < tailleGrille-1) {
-				affichage += "|      |\n";
+				affichage += "|"+espaceLibre+"|\n";
 			}
 			else{
-				affichage += "|      |\n";
+				affichage += "|"+espaceLibre+"|\n";
 			}
 		}
+		
 		affichage = haut + affichage + bas;
 		return affichage;
+		
 	}
 
 	public char[][] getTabCharGrille() {

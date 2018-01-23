@@ -2,6 +2,11 @@ package boggle.jeu;
 import clavier.Clavier;
 import boggle.mots.*;
 
+/**
+ * @author radixr rogeza
+ *Classe permettant de créer  la configuration du jeu
+ *le nombre de joueur, le nom, le type de jeu souhaité
+ */
 public class Config {
 
 	private int tailleGrille;
@@ -19,6 +24,15 @@ public class Config {
 		this.nbManchesMax = nbManchesMax;
 		this.scoreMax = scoreMax;
 		init();
+	}
+	
+	// constructeur pour interface graphique
+	public Config(int tailleGrille, int nbJoueurs, int nbManchesMax, int scoreMax, Joueur[] joueurs) {
+		this.tailleGrille = tailleGrille;
+		this.nbJoueurs = nbJoueurs;
+		this.nbManchesMax = nbManchesMax;
+		this.scoreMax = scoreMax;
+		this.joueurs = joueurs;
 	}
 
 	/** 
