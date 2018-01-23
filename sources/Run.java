@@ -1,8 +1,6 @@
-import boggle.jeu.*;
-import boggle.mots.*;
+import boggle.jeu.Config;
+import boggle.jeu.Jeu;
 import clavier.Clavier;
-import java.lang.*;
-import java.util.*;
 
 /**
  * @author rogeza radixr
@@ -50,7 +48,7 @@ public class Run {
 
 		// récap
 		Config config = new Config(tailleGrille, nbJoueurs, nbManches, scoreMax);
-		Jeu jeu = new Jeu(config);
+		new Jeu(config);
 
 
 	}

@@ -1,6 +1,5 @@
 package boggle.jeu;
 import clavier.Clavier;
-import boggle.mots.*;
 
 /**
  * @author radixr rogeza

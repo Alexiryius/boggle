@@ -25,7 +25,6 @@ import javax.swing.SwingConstants;
 
 import boggle.jeu.Config;
 import boggle.jeu.Joueur;
-import clavier.Clavier;
 
 /**
  * @author radixr rogeza
@@ -76,6 +75,7 @@ public class AffichageParam extends JFrame {
 	/**
 	 * méthode qui construit la fenêtre dialog pour rentrer les paramètre du jeu
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void showDialog() {
 
 //		// création de la fenètre dialog

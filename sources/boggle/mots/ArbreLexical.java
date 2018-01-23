@@ -189,15 +189,14 @@ public class ArbreLexical {
 
 		BufferedReader fichier_dico = null;
 		String line = "";
-		int i = 0;
 		try {
 			fichier_dico = new BufferedReader(new FileReader(fichier));
 			for (line = fichier_dico.readLine(); line != null; line = fichier_dico.readLine()) {
 
 				if (verifierMot(line)) {
 					this.ajouter(aNormalise(line));
-				} else
-					i++;
+				} 
+				
 			}
 
 			fichier_dico.close();

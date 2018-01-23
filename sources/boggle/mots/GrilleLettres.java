@@ -1,7 +1,5 @@
 package boggle.mots;
 
-import boggle.jeu.Joueur;
-
 /**
  * @author rogeza radixr
  * Classe construisant une grille de lettre
